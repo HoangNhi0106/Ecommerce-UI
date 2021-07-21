@@ -1,20 +1,26 @@
-import './App.css';
-import Home from './components/Home'
-import Navbar from './components/Navbar'
-import React, { useState } from 'react';
-
+import React from "react";
+import Navbar from "./navbar/Navbar";
+import Home from "./home/Home";
+import Product from "./product/Product";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 class App extends React.Component {
-  state = {
-    bootcamp: 'Rookies'
-  }
-
   render() {
-    return (
-      <div className="App">
-        <Navbar/>
-        <Home bootcamp = { this.state.bootcamp }/>
-      </div>
-    );
+      return (
+        <BrowserRouter>
+          <div className="root">
+            <Navbar />
+
+            <Switch>
+              <Route exact path="/home">
+                <Home/>
+              </Route>
+              <Route exact path="/product">
+                <Product/>
+              </Route>
+            </Switch>           
+          </div>
+        </BrowserRouter>
+      );
   }
 }
 

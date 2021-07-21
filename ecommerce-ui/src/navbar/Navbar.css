@@ -1,4 +1,5 @@
 #navbar {
+    font-family: Helvetica, sans-serif;
     display: flex;
     height: 75px;
     align-items: center;
@@ -8,12 +9,13 @@
   }
 
   .menu, .account {
+    display: inline-flex;
+    flex-direction: column;
     align-items: center;
   }
   
-  p {
+  #navbar p {
     color: #EDE5E2;
-    font-family: Helvetica, sans-serif;
     font-weight: bold;
     margin: 0px;
   }
@@ -24,6 +26,6 @@
     border-radius: 10px;
     width: 450px;
     height: 30px;
-    box-shadow: 0px 1px 5px #4A382F;
+    box-shadow: 2px 2px 8px #4A382F;
   }
   
