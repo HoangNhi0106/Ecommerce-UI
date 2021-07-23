@@ -1,7 +1,7 @@
 #navbar {
     font-family: Helvetica, sans-serif;
     display: flex;
-    height: 75px;
+    height: 85px;
     align-items: center;
     justify-content: space-between;
     background:  #9D5D48;
@@ -23,9 +23,10 @@
   .search {
     text-align: center;
     background-color: white;
-    border-radius: 10px;
-    width: 450px;
-    height: 30px;
+    border-radius: 30px;
+    width: 550px;
+    height: 40px;
     box-shadow: 2px 2px 8px #4A382F;
+    line-height: 40px;
   }
   

@@ -1,11 +1,13 @@
 #product {
     font-family: Helvetica, sans-serif;
-    margin: 20px 100px;
+    margin: 30px auto;
+    width: 1300px;
 }
 
 .product-info {
     display: flex;
     border-radius: 20px;
+    height: 400px;
 }
 
 .product-info img {
@@ -19,6 +21,10 @@
     border-radius: 20px;
     background-color: #EDE5E2;
     padding: 20px 40px;
+}
+
+.product-detail .product-category {
+    margin-top: 20px;
 }
 
 .product-detail .product-name {
@@ -45,6 +51,52 @@
     line-height: 50px;
     box-shadow: 2px 2px 8px #C6B9B0;
     margin-top: 10px;
+}
+
+.product-detail .product-amount {
+    display: flex;
+    margin-top: 30px;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-detail .product-amount .circle-btn {
+    border-radius: 50%;
+    border: none;
+    background-color: #D2BBC4;
+    height: 40px;
+    width: 40px;
+    margin: 20px;
+    color: white;
+    font-weight: bolder;
+    font-size: 30px;
+    line-height: 30px;
+}
+
+.product-detail .product-amount input {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    width: 30px;
+    height: 25px;
+    text-align: center;
+}
+
+.product-detail .btn-buy {
+    border-radius: 30px;
+	background: #9D5D48;
+	border: none;
+	font-size: 18px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	color: white;
+	outline: none;
+	cursor: pointer;
+    padding: 10px 20px;
+    box-shadow: 1px 1px 5px #4A382F;
+
+    margin: 10px;
+    position: relative;
+    left: 38%;
 }
 
 .product-description {

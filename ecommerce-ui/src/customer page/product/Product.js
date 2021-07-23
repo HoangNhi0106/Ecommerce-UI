@@ -15,7 +15,6 @@ const Rating = () => {
     return (
         <div className = "rating">
             <div className = "rating-account">
-                <img src="user.png" height="64px"/>
                 <p>HoangNhi</p>
             </div>
             <div className = "rating-detail">
@@ -37,11 +36,18 @@ const Product = () => {
                 <img src="product.png" height="400px"/>
                 <div className = "product-detail">
                     <div className = "product-name">Romand ZERO VELVET TINT</div>
+                    <div className = "product-category">LIPSTICK</div>
                     <div className = "product-rate-sold">
                         <img src = "star.png" height="16px"/>
                         <p>(4.9) | 16 products sold</p>
                     </div>
                     <div className = "product-price">300 000đ</div>
+                    <div className = "product-amount">
+                        <button className = "circle-btn">-</button>
+                        <input type="text" name="amount" value="1" />
+                        <button className = "circle-btn">+</button>
+                    </div>
+                    <button className = "btn-buy">ADD TO CART</button>
                 </div>
             </div>
             <div className = "product-description">

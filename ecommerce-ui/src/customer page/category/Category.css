@@ -1,0 +1,36 @@
+#category {
+    font-family: Helvetica, sans-serif;
+    margin: 20px 120px;
+    display: grid;
+    grid-template-columns: 40% 60%;
+}
+
+#category .category-info {
+    grid-column: 1;
+    border: 1px solid lightgrey;
+    height: fit-content;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 0 50px;
+    width: 60%;
+    box-shadow: 2px 2px 8px #C2C4C4;
+}
+
+#category .category-info .category-name {
+    font-weight: bold;
+    text-align: center;
+    font-size: 20px;
+    color: #9D5D48;
+    margin-bottom: 20px;
+}
+
+#category .category-info .category-description {
+    font-weight: lighter;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#category .product-list {
+    grid-column: 2;
+}
