@@ -24,10 +24,12 @@
 }
 
 .product-detail .product-category {
+    text-transform: uppercase;
     margin-top: 20px;
 }
 
 .product-detail .product-name {
+    text-transform: uppercase;
     font-weight: bold;
     color: #4A382F;
     font-size: 20px;

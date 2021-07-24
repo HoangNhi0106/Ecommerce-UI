@@ -4,18 +4,14 @@
 }
 
 .category-item .category-name {
+    display: block;
     background-color: #9D5D48;
     margin: 20px 100px;
     border-radius: 20px;
     color: white;
+    text-decoration: none;
     font-weight: bold;
     padding: 5px;
     text-align: center;
     box-shadow: 2px 2px 8px #4A382F;
-}
-
-.category-item .product-list {
-    display: flex;
-    justify-content: space-between;
-    margin: 0px 120px;
 }

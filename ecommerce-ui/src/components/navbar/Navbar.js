@@ -1,22 +1,23 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
     return (
         <nav id = 'navbar'>
-            <div className = "logo">
-                <img src = "logo.png" width="64px" height="64px"/>
-            </div>
+            <Link to='/' className = "logo">
+                <img src = "/images/logo.png" width="64px" height="64px"/>
+            </Link>
             <div className = "menu">
-                <img src = "menu.png" height="32px" width="32px"/>
+                <img src = "/images/menu.png" height="32px" width="32px"/>
                 <p>category</p>
             </div>
             <div className = "search">SEARCH BAR</div>
             <div className = "cart">
-                <img src = "cart.png" height="32px"/>
+                <img src = "/images/cart.png" height="32px"/>
             </div>
             <div className = "account">
-                <img src = "user.png" height="32px"/>
+                <img src = "/images/user.png" height="32px"/>
                 <p>Hoang Nhi</p>
             </div>
         </nav>

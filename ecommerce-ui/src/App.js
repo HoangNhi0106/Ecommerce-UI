@@ -16,10 +16,10 @@ function App() {
         <Navbar />
 
         <Switch>
-          <Route exact path="/home">
+          <Route exact path="/">
             <Home/>
           </Route>
-          <Route exact path="/product">
+          <Route path="/product">
             <Product/>
           </Route>
           <Route exact path="/signup">
@@ -28,7 +28,7 @@ function App() {
           <Route exact path="/signin">
             <Signin/>
           </Route>
-          <Route exact path="/category">
+          <Route path="/category">
             <Category/>
           </Route>
           <Route exact path="/user">
