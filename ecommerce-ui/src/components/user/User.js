@@ -31,7 +31,7 @@ const User = () => {
                 'Authorization': `${user.tokenType} ${user.accessToken}`
             }
         }).then(response => {
-            console.log(response.data);
+            console.log(response.data.data);
             alert("Update successful!");
         }).catch(err => console.log(err))
     }

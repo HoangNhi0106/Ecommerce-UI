@@ -143,13 +143,78 @@
     align-items: center;
     line-height: 0;
     border-radius: 5px;
+    margin-top: 20px;
 }
 
 .rating .rating-detail {
     margin-left: 50px;
     line-height: 30px;
+    position: relative;
+    width: 100%;
 }
 
 .rating .rating-detail .rating-star img {
     padding-right: 5px;
+}
+
+.rating .rating-detail .rating-data {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.rating .rating-detail .rating-data img {
+    margin-right: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.rating .rating-detail .rating-data input {
+    border: 1px solid lightgrey;
+    outline: none;
+    box-shadow: 2px 2px 8px #C2C4C4;
+    border-radius: 5px;
+}
+
+.rating .rating-detail textarea {
+    width: 88%;
+    border: 1px solid lightgrey;
+    outline: none;
+    box-shadow: 2px 2px 8px #C2C4C4;
+    resize: none;
+    border-radius: 5px;
+}
+
+.rating-btn {
+    border-radius: 30px;
+	background: #D2BBC4;
+	border: none;
+	font-size: 15px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	color: white;
+	outline: none;
+	cursor: pointer;
+    padding: 5px 10px;
+    box-shadow: 1px 1px 5px #D2BBC4;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
+.rating-btn:hover {
+    border-radius: 30px;
+	background: #D2BBC4;
+	border: none;
+	font-size: 18px;
+	font-weight: bolder;
+	letter-spacing: 1px;
+	color: white;
+	outline: none;
+	cursor: pointer;
+    padding: 5px 10px;
+    box-shadow: 1px 1px 5px #D2BBC4;
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
 }

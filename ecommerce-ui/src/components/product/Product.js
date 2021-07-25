@@ -46,7 +46,55 @@ const Rating = (productId) => {
     )
 }
 
+const UserRating = (props) => {
+    const [star, setStar] = useState(5);
+    const [comment, setComment] = useState("");
+
+    const handleRatingSubmit = async e => {
+        console.log(props.user);
+        e.preventDefault();
+        let UrlRating = "http://localhost:8080/ecommerce-api/user/rating/save"
+        const data = {
+            productId: props.productId,
+            accountId: props.user.id,
+            star,
+            comment
+        }
+        await axios.post(UrlRating, data, {
+            headers : {
+                'Authorization': `${props.user.tokenType} ${props.user.accessToken}`
+            }
+        }).then(response => {
+            alert("Rating successful!");
+            window.location.reload();
+        }).catch(err => console.log(err));
+    }
+
+    if (!props.user) return(<></>)
+    else return (
+        <div className="rating">
+            <div className = "rating-account">
+                <p>{props.user.username}</p>
+            </div>
+            <div className = "rating-detail">
+                <form>
+                <div className="rating-data">
+                    <label htmlFor="star"><img src="/images/star.png" height="16px" /></label>
+                    <input type="number" max="5" min="1" className="star" placeholder="5"
+                        onChange={({ target }) => setStar(target.value)}/>
+                </div>
+                <textarea className="rating-data comment-box" placeholder="Put your comment" 
+                    onChange={({ target }) => setComment(target.value)}>
+                </textarea>
+                </form>
+                <button type="submit" className="rating-btn" onClick={handleRatingSubmit}>ENTER</button>
+            </div>
+        </div>
+    )
+}
+
 const Product = () => {
+    const [user, setUser] = useState(false);  
     const [product, setProduct] = useState([]);
     const location = useLocation();
     const { id } = location.state;
@@ -57,8 +105,11 @@ const Product = () => {
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "GET"}
-        })
-            .then(response => setProduct(response.data.data));
+        }).then(response => setProduct(response.data.data));
+
+        const checkUser = localStorage.getItem("user");
+        if (checkUser)
+            setUser(JSON.parse(checkUser));
     }, []);
 
     return (
@@ -88,6 +139,7 @@ const Product = () => {
             <div className = "product-review">
                 <div className = "box-review">PRODUCT REVIEWS</div>
                 {Rating(id)}
+                <UserRating user={user} productId={id}/>
             </div>
         </div>
     )
