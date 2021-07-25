@@ -1,34 +1,73 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import './Signup.css';
 
-const Signup = () => {
+const Signup = (props) => {
+    let UrlSignup="http://localhost:8080/ecommerce-api/auth/signup";
+    let UrlSignin="http://localhost:8080/ecommerce-api/auth/signin";
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [rePassword, setRePassword] = useState("");
+    const [email, setEmail] = useState("");
+    //const [user, setUser] = useState(false);  
+
+    const handleSignupSubmit = async e => {
+        if (rePassword != password)
+            console.log("password must be equal to retyped password");
+        else {
+            e.preventDefault();
+            const data = { username, email, password };
+            console.log(data);
+
+            //signup
+            await axios.post(UrlSignup, data )
+            .then(response => {
+                console.log(response)
+                 //signin
+                axios.post(UrlSignin, { username, password })
+                .then(response => {
+                    // store the user in localStorage
+                    localStorage.setItem('user', response.data);
+                    //reload page
+                    props.handleSignupClick();
+                    window.location.reload();
+                })
+                .catch(err => console.log(err));
+            }) .catch(err => console.log(err)); 
+        }
+    };
+
     return (
-        <div id = "signup">
+        <div className={`${!props.isShowSignup ? "active-signup" : ""} show-signup`}>
             <div className = "signup-form">
-                <img src="logo-2.png"/>
+                <img src="/images/logo-2.png"/>
                 <div className = "form">
                     <form id="signup-form">
                         <div className="signup-data">
-                            <label for="username">USERNAME</label>
-                            <input type="text" name="username" value="NguyenVanA"/>
+                            <label htmlFor="username">USERNAME</label>
+                            <input type="text" name="username" placeholder="NguyenVanA"
+                                onChange={({ target }) => setUsername(target.value)}/>
                         </div>
                         <div className="signup-data">
-                            <label for="email">EMAIL</label>
-                            <input type="text" name="email" value="abc@gmail.com"/>
+                            <label htmlFor="email">EMAIL</label>
+                            <input type="text" name="email" placeholder="abc@gmail.com"
+                                onChange={({ target }) => setEmail(target.value)}/>
                         </div>
                         <div className="signup-data">
-                            <label for="password">PASSWORD</label>
-                            <input type="password" name="password" value="pass123456"/>
+                            <label htmlFor="password">PASSWORD</label>
+                            <input type="password" name="password" placeholder="password"
+                                onChange={({ target }) => setPassword(target.value)}/>
                         </div>
                         <div className="signup-data">
-                            <label for="re-password">RETYPED PASSWORD</label>
-                            <input type="password" name="re-password" value="pass123456"/>
+                            <label htmlFor="re-password">RETYPED PASSWORD</label>
+                            <input type="password" name="re-password" placeholder="password"
+                                onChange={({ target }) => setRePassword(target.value)}/>
                         </div>
                     </form>
-                    <button className = "btn-signup" type="submit">SIGNUP</button>
+                    <button className = "btn-signup" type="submit" onClick={handleSignupSubmit}>SIGNUP</button>
                 </div>
             </div>
-            <img className="picture-signup" src="signup-picture.jpg"/>
+            <img className="picture-signup" src="/images/signup-picture.jpg"/>
         </div>
     )
 }

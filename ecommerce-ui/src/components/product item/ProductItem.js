@@ -12,7 +12,6 @@ const ProductItem = (props) => {
 
     let Url = 'http://localhost:8080/ecommerce-api/public/product/category=' + props.cname;
     useEffect(() => {
-        // GET request using axios inside useEffect React hook
         axios.get(Url, {
             headers: {
                 "Access-Control-Allow-Origin": "*",

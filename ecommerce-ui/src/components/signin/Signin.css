@@ -1,12 +1,24 @@
-#signin {
+.show-signin {
     display: grid;
     grid-template-columns: 50% 50%;
     height: 600px;
     width: 800px;
     font-family: Helvetica, sans-serif;
-    margin: 50px auto;
+    margin-top: 20px;
+    left: 50%;
+    margin-left: -400px; 
     border-radius: 30px;
     box-shadow: 2px 2px 8px #4A382F;
+    position: fixed;
+    transition:  800ms;
+    opacity: 1;
+    z-index: 1;
+    background-color: white;
+}
+
+.show-signin.active-signin {
+    transform: translate(100px) scale(0);
+    opacity: 0;
 }
 
 .signin-form {
@@ -44,6 +56,7 @@
 	font-size: 15px;
 	background-color: #EDE5E2;
     border: none;
+    outline: none;
     box-shadow: 1px 1px 5px #D2BBC4;
     margin-top: 20px;
 }
@@ -71,4 +84,22 @@
     margin: 0;
     position: relative;
     left: 38%;
+}
+
+.form .btn-signin:hover {
+    border-radius: 30px;
+	background: #9D5D48;
+	border: none;
+	font-size: 20px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	color: white;
+	outline: none;
+	cursor: pointer;
+    padding: 10px 20px;
+    box-shadow: 1px 1px 5px #4A382F;
+
+    margin: 0;
+    position: relative;
+    left: 36%;
 }

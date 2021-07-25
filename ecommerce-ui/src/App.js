@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./components/navbar/Navbar";
 import Home from "./components/home/Home";
 import Product from "./components/product/Product";
@@ -10,11 +10,25 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import './App.css';
 
 function App() {
+  const [isShowSignin, setIsShowSignin] = useState(false);
+  const [isShowSignup, setIsShowSignup] = useState(false);
+
+  const handleSigninClick = () => {
+    setIsShowSignup(false);
+    setIsShowSignin((isShowSignin) => !isShowSignin);
+  }
+
+  const handleSignupClick = () => {
+    setIsShowSignin(false);
+    setIsShowSignup((isShowSignup) => !isShowSignup);
+  }
+
   return (
     <BrowserRouter>
       <div className="root">
-        <Navbar />
-
+        <Navbar handleSigninClick={handleSigninClick} handleSignupClick={handleSignupClick}/>
+        <Signin isShowSignin={isShowSignin} handleSigninClick={handleSigninClick}/>
+        <Signup isShowSignup={isShowSignup} handleSignupClick={handleSignupClick}/>
         <Switch>
           <Route exact path="/">
             <Home/>
@@ -22,16 +36,10 @@ function App() {
           <Route path="/product">
             <Product/>
           </Route>
-          <Route exact path="/signup">
-            <Signup/>
-          </Route>
-          <Route exact path="/signin">
-            <Signin/>
-          </Route>
           <Route path="/category">
             <Category/>
           </Route>
-          <Route exact path="/user">
+          <Route path="/user">
             <User/>
           </Route>
         </Switch>           
