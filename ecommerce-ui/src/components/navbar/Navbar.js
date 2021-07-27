@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import './Navbar.css';
+import Category from "../category/Category";
 
 const signout = () => {
     localStorage.clear();
@@ -46,7 +47,7 @@ const DropDownCategory = (props) => {
     return (
         <div className={`${props.isShowCategory  ? "show" : ""} dropdown-content`}>
             {category.map(item => (
-                <Link key={item.categoryId} to={{ pathname: RouteChange(item), state: {name: item.cname} }}>
+                <Link key={item.categoryId} to={{ pathname: RouteChange(item)}}>
                     {item.cname}
                 </Link>
             ))}
@@ -88,6 +89,8 @@ const Account = (props) => {
 
 const Navbar = (props) => {   
     const [user, setUser] = useState();  
+    const [search, setSearch] = useState(""); 
+    const history = useHistory();
     const [isShowCategory, setIsShowCategory] = useState(false);
  
     const handleDropDownCategory = () => {
@@ -100,6 +103,11 @@ const Navbar = (props) => {
             setUser(JSON.parse(checkUser));
       }, []);
 
+    const SearchProduct = (event) => {
+        if (event.key === 'Enter')
+            history.push(`/search/${search}`)
+    }
+
 
     return (
         <nav id = 'navbar'>
@@ -111,7 +119,9 @@ const Navbar = (props) => {
                 <p>category</p>
                 <DropDownCategory isShowCategory={isShowCategory}/>
             </div>
-            <div className = "search">SEARCH BAR</div>
+            <input type="text" className = "search" placeholder="search product" 
+                onChange={({ target }) => setSearch(target.value)}
+                onKeyPress={event => SearchProduct(event)}/>
             <div className = "cart">
                 <img src = "/images/cart.png" height="32px"/>
             </div>

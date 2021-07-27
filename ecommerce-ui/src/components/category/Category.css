@@ -3,6 +3,7 @@
     margin: 20px 120px;
     display: grid;
     grid-template-columns: 40% 60%;
+    width: 100%;
 }
 
 #category .category-info {
@@ -33,4 +34,5 @@
 
 #category .product-list {
     grid-column: 2;
+    width: 100%;
 }

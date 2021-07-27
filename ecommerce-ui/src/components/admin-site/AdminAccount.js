@@ -21,7 +21,6 @@ export const AdminAccount = () => {
     }, []);
 
     const handleDeleteAccount = async (e, id) => {
-        console.log(id);
         e.preventDefault();
         let Url = "http://localhost:8080/ecommerce-api/admin/account/delete/" + id;
         
@@ -62,7 +61,7 @@ export const AdminAccount = () => {
                         <td>{item.phone}</td>
                         <td>{item.createdIn}</td>
                         <td>{item.updatedIn}</td>
-                        <td><button className="delete-btn" onClick={(e) => handleDeleteAccount(e, item.ratingId)}>X</button></td>
+                        <td><button className="delete-btn" onClick={(e) => handleDeleteAccount(e, item.accountId)}>X</button></td>
                     </tr>
                 )}
                 </tbody>

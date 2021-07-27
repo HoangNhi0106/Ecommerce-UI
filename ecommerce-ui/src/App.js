@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Navbar from "./components/navbar/Navbar";
 import Home from "./components/home/Home";
 import Product from "./components/product/Product";
@@ -9,6 +9,7 @@ import User from "./components/user/User";
 import AdminSite from "./components/admin-site/AdminSite";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import './App.css';
+import Search from "./components/seach/Search";
 
 function App() {
   const [isShowSignin, setIsShowSignin] = useState(false);
@@ -37,7 +38,7 @@ function App() {
           <Route path="/product">
             <Product/>
           </Route>
-          <Route path="/category">
+          <Route path="/category/:cname">
             <Category/>
           </Route>
           <Route path="/user">
@@ -45,6 +46,9 @@ function App() {
           </Route>
           <Route path="/admin">
             <AdminSite/>
+          </Route>
+          <Route path="/search/:pname">
+            <Search/>
           </Route>
         </Switch>           
       </div>

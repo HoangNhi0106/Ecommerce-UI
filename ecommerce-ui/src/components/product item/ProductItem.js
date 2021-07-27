@@ -9,8 +9,7 @@ const ProductItem = (props) => {
     const RouteChange = (item) => {
         return `/product/id=${item.productId}`;
     }
-
-    let Url = 'http://localhost:8080/ecommerce-api/public/product/category=' + props.cname;
+    let Url = 'http://localhost:8080/ecommerce-api/public/product/category=' + props.name;
     useEffect(() => {
         axios.get(Url, {
             headers: {
@@ -18,14 +17,15 @@ const ProductItem = (props) => {
                 "Access-Control-Allow-Methods": "GET"}
         })
             .then(response => setProductList(response.data.data));
-    }, []);
+    }, [props.name]);
 
-    if (props.type==="home") {
+
+    if (props.type === true) {
         return (
-            <div className = "product-list">
-                {productList.slice(0,7).map(item => (
+            <div className = "product-list center">
+                {productList.slice(0,5).map(item => (
                     <Link to={{ pathname: RouteChange(item), state: {id: item.productId} }} id = "product-item" key={item.productId}>
-                        <img src="/images/product.png" width="150px" height="150px"/>
+                        <img src={item.image} width="150px" height="150px"/>
                         <div className = "product-name">{item.pname}</div>
                         <div className = "product-rating">
                             <img src="/images/star.png" height="16px"/>
@@ -37,10 +37,10 @@ const ProductItem = (props) => {
         )
     } 
     else return (
-        <div className = "product-list">
+        <div className = "product-list left">
             {productList.map(item => (
                 <Link to={{ pathname: RouteChange(item), state: {id: item.productId} }} id = "product-item" key={item.productId}>
-                    <img src="/images/product.png" width="150px" height="150px"/>
+                    <img src={item.image} width="150px" height="150px"/>
                     <div className = "product-name">{item.pname}</div>
                     <div className = "product-rating">
                         <img src="/images/star.png" height="16px"/>

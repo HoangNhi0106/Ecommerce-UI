@@ -5,7 +5,7 @@ import './AdminSite.css';
 
 export const AdminRating = () => {
     const checkUser = localStorage.getItem("user");
-    const [user, setUser] = useState(checkUser); 
+    const [user, setUser] = useState(JSON.parse(checkUser)); 
     const [ratingList, setRatingList] = useState([]);
     let Url = "http://localhost:8080/ecommerce-api/admin/rating";
 
@@ -20,7 +20,7 @@ export const AdminRating = () => {
             .then(response => setRatingList(response.data.data))
             .catch(err => console.log(err));
         
-    }, [user]);
+    }, []);
 
     const handleDeleteRating = async (e, id) => {
         console.log(id);

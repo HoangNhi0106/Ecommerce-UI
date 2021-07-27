@@ -28,6 +28,8 @@
   height: 40px;
   box-shadow: 2px 2px 8px #4A382F;
   line-height: 40px;
+  outline: none;
+  border: none;
 }
 
 .sign .button {
@@ -81,7 +83,7 @@
   border-radius: 5px;
 }
 
-.dropdown-content Link {
+.route {
 	color: #4A382F;
 	padding: 12px 16px;
 	text-decoration: none;
@@ -91,13 +93,12 @@
   border-radius: 5px;
 }
 
-
 .dropdown-content a:hover {
   background-color: #D2BBC4;
   border-radius: 5px;
 }
 
-.dropdown-content Link:hover {
+.route:hover {
   background-color: #D2BBC4;
   border-radius: 5px;
 }

@@ -53,17 +53,16 @@ const UserRating = (props) => {
     const handleRatingSubmit = async e => {
         e.preventDefault();
         let UrlRating = "http://localhost:8080/ecommerce-api/user/rating/save"
-        const data = {
+        await axios.post(UrlRating, {
             productId: props.productId,
             accountId: props.user.id,
             star,
             comment
-        }
-        await axios.post(UrlRating, data, {
+        }, {
             headers : {
                 'Authorization': `${props.user.tokenType} ${props.user.accessToken}`
             }
-        }).then(response => {
+        }).then(() => {
             alert("Rating successful!");
             window.location.reload();
         }).catch(err => console.log(err));
@@ -114,7 +113,7 @@ const Product = () => {
     return (
         <div id = "product">
             <div className = "product-info">
-                <img src="/images/product.png" height="400px"/>
+                <img src={product.image} height="400px"/>
                 <div className = "product-detail">
                     <div className = "product-name">{product.pname}</div>
                     <div className = "product-category">{product.categoryName}</div>

@@ -1,15 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import { Route, Switch } from "react-router";
 import axios from 'axios';
 import './AdminSite.css';
 
 const CreateNewProduct = ({isShowCreate}) => {
     const [user, setUser] = useState();  
-    const [pname, setPname] = useState("");
-    const [categoryName, setCategoryName] = useState("");
+    const [pname, setPname] = useState(null);
+    const [categoryName, setCategoryName] = useState(null);
     const [amount, setAmount] = useState(0);
     const [price, setPrice] = useState(0);
-    const [description, setDescription] = useState("");
+    const [description, setDescription] = useState(null);
+    const [image, setImage] = useState(null);
 
     useEffect(() => {
         const checkUser = localStorage.getItem("user");
@@ -17,22 +17,57 @@ const CreateNewProduct = ({isShowCreate}) => {
             setUser(JSON.parse(checkUser));
       }, []);
 
+    const SaveWithImage = (formData) => {
+        let UrlImage = "http://localhost:8080/ecommerce-api/admin/image/save";
+        let UrlProduct = "http://localhost:8080/ecommerce-api/admin/product/save";
+        
+        axios.post(UrlImage, 
+            formData, {
+                headers : {
+                    "Content-Type": "multipart/form-data",
+                    'Authorization': `${user.tokenType} ${user.accessToken}`
+                } 
+            }).then(response => {
+                //save product 
+                axios.post(UrlProduct, {
+                    pname, categoryName, image: response.data.data.imageId, description, price, amount
+                }, {
+                    headers : {
+                        "Content-Type": "application/json",
+                        'Authorization': `${user.tokenType} ${user.accessToken}`
+                    }
+                }).then(() => {
+                    alert("Create Product successful!");
+                    window.location.reload();
+                }).catch(err => console.log(err)); 
+            })
+            .catch(err => console.log(err));
+    }
 
-    const handleCreateProductSubmit = async e => {
-        e.preventDefault();
-        let Url = "http://localhost:8080/ecommerce-api/admin/product/save";
-        const data = {
-            pname, categoryName, description, price, amount
-        }
-
-        await axios.post(Url, data, {
+    const SaveWithoutImage = () => {
+        let UrlProduct = "http://localhost:8080/ecommerce-api/admin/product/save";
+        axios.post(UrlProduct, {
+            pname, categoryName, image: null, description, price, amount
+        }, {
             headers : {
+                "Content-Type": "application/json",
                 'Authorization': `${user.tokenType} ${user.accessToken}`
             }
-        }).then(response => {
+        }).then(() => {
             alert("Create Product successful!");
             window.location.reload();
-        }).catch(err => console.log(err));
+        }).catch(err => console.log(err)); 
+    }
+
+    const HandleCreateProductSubmit = async e => {
+        e.preventDefault();
+        let formData = new FormData();
+        formData.append("file", image);
+
+        if (image != null) 
+            SaveWithImage(formData);
+        else
+            SaveWithoutImage();
     }
 
     return (
@@ -50,6 +85,11 @@ const CreateNewProduct = ({isShowCreate}) => {
                         onChange={({ target }) => setCategoryName(target.value)}/>
                 </div>
                 <div className="data">
+                    <label htmlFor="image">IMAGE</label>
+                    <input type="file" name="image" 
+                        onChange={({ target }) => setImage(target.files[0])}/>
+                </div>
+                <div className="data">
                     <label htmlFor="amount">AMOUNT</label>
                     <input type="number" name="amount" min="0"
                         onChange={({ target }) => setAmount(target.value)}/>
@@ -65,7 +105,7 @@ const CreateNewProduct = ({isShowCreate}) => {
                         onChange={({ target }) => setDescription(target.value)}/>
                 </div>
             </form>
-            <button type="submit" className="submit-btn" onClick={handleCreateProductSubmit}>SAVE</button>
+            <button type="submit" className="submit-btn" onClick={HandleCreateProductSubmit}>SAVE</button>
         </div>
     )
 }
@@ -78,6 +118,7 @@ const EditProduct = (props) => {
     const [amount, setAmount] = useState(product.amount);
     const [price, setPrice] = useState(product.price);
     const [description, setDescription] = useState(product.description);
+    const [image, setImage] = useState(null);
 
     useEffect(() => {
         const checkUser = localStorage.getItem("user");
@@ -85,22 +126,58 @@ const EditProduct = (props) => {
             setUser(JSON.parse(checkUser));
     }, []);
 
-    const handleEditProductSubmit = async e => {
-        e.preventDefault();
-        let Url = "http://localhost:8080/ecommerce-api/admin/product/update";
-        const data = {
-            productId: product.productId, pname, categoryName, description, price, amount
-        }
+    const UpdateWithImage = (formData) => {
+        let UrlImage = "http://localhost:8080/ecommerce-api/admin/image/save";
+        let UrlProduct = "http://localhost:8080/ecommerce-api/admin/product/update";
+        
+        axios.post(UrlImage, 
+            formData, {
+                headers : {
+                    "Content-Type": "multipart/form-data",
+                    'Authorization': `${user.tokenType} ${user.accessToken}`
+                } 
+            }).then(response => {
+                //save product 
+                axios.put(UrlProduct, {
+                    productId: product.productId, pname, categoryName, image: response.data.data.imageId, description, price, amount
+                }, {
+                    headers : {
+                        "Content-Type": "application/json",
+                        'Authorization': `${user.tokenType} ${user.accessToken}`
+                    }
+                }).then(() => {
+                    alert("Update Product successful!");
+                    window.location.reload();
+                }).catch(err => console.log(err)); 
+            })
+            .catch(err => console.log(err));
+    }
 
-        console.log(data);
-        await axios.put(Url, data, {
+    const UpdateWithoutImage = () => {
+        let UrlProduct = "http://localhost:8080/ecommerce-api/admin/product/update";
+        axios.put(UrlProduct, {
+            productId: product.productId, pname, categoryName, image: null, description, price, amount
+        }, {
             headers : {
+                "Content-Type": "application/json",
                 'Authorization': `${user.tokenType} ${user.accessToken}`
             }
         }).then(() => {
             alert("Update Product successful!");
             window.location.reload();
-        }).catch(err => console.log(err));
+        }).catch(err => console.log(err)); 
+    }
+
+    const HandleEditProductSubmit = async e => {
+        e.preventDefault();
+        //save image
+        let formData = new FormData();
+        formData.append("file", image);
+        
+        if (image != null) 
+            UpdateWithImage(formData);
+        else
+            UpdateWithoutImage();
     }
 
     return (
@@ -118,6 +195,11 @@ const EditProduct = (props) => {
                         onChange={({ target }) => setCategoryName(target.value)}/>
                 </div>
                 <div className="data">
+                    <label htmlFor="image">IMAGE</label>
+                    <input type="file" name="image" 
+                        onChange={({ target }) => setImage(target.files[0])}/>
+                </div>
+                <div className="data">
                     <label htmlFor="amount">AMOUNT</label>
                     <input type="number" name="amount" min="0" placeholder={product.amount}
                         onChange={({ target }) => setAmount(target.value)}/>
@@ -133,7 +215,7 @@ const EditProduct = (props) => {
                         onChange={({ target }) => setDescription(target.value)}/>
                 </div>
             </form>
-            <button type="submit" className="submit-btn" onClick={handleEditProductSubmit}>SAVE</button>
+            <button type="submit" className="submit-btn" onClick={HandleEditProductSubmit}>SAVE</button>
         </div>
     )
 }
@@ -195,6 +277,7 @@ export const AdminProduct = () => {
                     <th>ID</th>
                     <th>Product Name</th>
                     <th>Category Name</th>
+                    <th>Image URL</th>
                     <th>Amount</th>
                     <th>Sold</th>
                     <th>Price</th>
@@ -211,6 +294,7 @@ export const AdminProduct = () => {
                         <td>{item.productId}</td>
                         <td onClick={() => handleIsShowEdit(item)}>{item.pname}</td>
                         <td>{item.categoryName}</td>
+                        <td><a href={item.image}>{item.image}</a></td>
                         <td>{item.amount}</td>
                         <td>{item.sold}</td>
                         <td>{item.price}</td>

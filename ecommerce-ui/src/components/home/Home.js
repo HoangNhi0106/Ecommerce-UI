@@ -27,7 +27,7 @@ const CategoryList = () => {
                     <Link to={{ pathname: RouteChange(item), state: {name: item.cname} }} className = "category-name">
                         {item.cname}
                     </Link>
-                    <ProductItem cname={item.cname} type="home"/>
+                    <ProductItem name={item.cname} type={true}/>
                 </div>
             ))}
         </div>
