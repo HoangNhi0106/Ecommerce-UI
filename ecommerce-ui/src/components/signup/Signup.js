@@ -17,7 +17,6 @@ const Signup = (props) => {
         else {
             e.preventDefault();
             const data = { username, email, password };
-            console.log(data);
 
             //signup
             await axios.post(UrlSignup, data )

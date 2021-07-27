@@ -9,7 +9,6 @@ const Category = () => {
     const location = useLocation();
     const { name } = location.state;
 
-
     let Url = 'http://localhost:8080/ecommerce-api/public/category/' + name;
 
     useEffect(() => {
@@ -20,6 +19,7 @@ const Category = () => {
         })
             .then(response => setCategory(response.data.data));
     }, []);
+    
 
     return (
         <div id = "category">

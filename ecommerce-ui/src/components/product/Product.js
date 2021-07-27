@@ -51,7 +51,6 @@ const UserRating = (props) => {
     const [comment, setComment] = useState("");
 
     const handleRatingSubmit = async e => {
-        console.log(props.user);
         e.preventDefault();
         let UrlRating = "http://localhost:8080/ecommerce-api/user/rating/save"
         const data = {

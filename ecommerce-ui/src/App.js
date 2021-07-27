@@ -6,6 +6,7 @@ import Signup from "./components/signup/Signup";
 import Signin from "./components/signin/Signin";
 import Category from "./components/category/Category";
 import User from "./components/user/User";
+import AdminSite from "./components/admin-site/AdminSite";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import './App.css';
 
@@ -41,6 +42,9 @@ function App() {
           </Route>
           <Route path="/user">
             <User/>
+          </Route>
+          <Route path="/admin">
+            <AdminSite/>
           </Route>
         </Switch>           
       </div>

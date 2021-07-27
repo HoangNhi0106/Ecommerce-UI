@@ -37,7 +37,6 @@ const CategoryList = () => {
 const Home = () => {
     return (
         <div id = "home">
-            <div className = "banner"> BANNER </div>
             {CategoryList()} 
         </div>
     )

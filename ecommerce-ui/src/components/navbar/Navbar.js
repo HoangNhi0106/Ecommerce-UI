@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 
@@ -7,27 +8,54 @@ const signout = () => {
     window.location.reload();
 }
 
-const DropDown = (props) => {
+const DropDownAccount = (props) => {
     let roles = props.user.roles;
     if (roles.includes("ROLE_ADMIN")) {
         return (
-            <div className={`${props.isShow ? "show" : ""} dropdown-content`}>
-                <a href={`/admin/${props.user.username}`}>Admin page</a>
+            <div className={`${props.isShowAccount ? "show" : ""} dropdown-content`}>
+                <a href={"/admin"}>Admin page</a>
                 <a href={`/user/${props.user.username}`}>Update profile</a>
                 <a onClick={signout}>Signout</a>
             </div>
         )
     } else
         return (
-            <div className={`${props.isShow ? "show" : ""} dropdown-content`}>
+            <div className={`${props.isShowAccount ? "show" : ""} dropdown-content`}>
                 <a href={`/user/${props.user.username}`}>Update profile</a>
                 <a onClick={signout}>Signout</a>
             </div>
         )
 }
 
+const DropDownCategory = (props) => {
+    const [category, setCategory] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/ecommerce-api/public/category', {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET"}
+        })
+            .then(response => setCategory(response.data.data));
+    }, []);
+
+    const RouteChange = (item) => {
+        return `/category/${item.cname}`;
+    }
+
+    return (
+        <div className={`${props.isShowCategory  ? "show" : ""} dropdown-content`}>
+            {category.map(item => (
+                <Link key={item.categoryId} to={{ pathname: RouteChange(item), state: {name: item.cname} }}>
+                    {item.cname}
+                </Link>
+            ))}
+        </div>
+    )
+}
+
 const Account = (props) => {    
-    const [isShow, setIsShow] = useState(false);
+    const [isShowAccount, setIsShowAccount] = useState(false);
     
     const handleSignin = () => {
         props.handleSigninClick();
@@ -37,15 +65,16 @@ const Account = (props) => {
         props.handleSignupClick();
     }
 
-    const handleDropDown = () => {
-        setIsShow((isShow) => !isShow);
+    const handleDropDownAccount = () => {
+        setIsShowAccount((isShowAccount) => !isShowAccount);
     }
+
     if (props.user) {
         return (
-            <div className = "account" onClick={handleDropDown}>
+            <div className = "account" onClick={handleDropDownAccount}>
                 <img src = "/images/user.png" height="32px"/>
-                <p>Hoang Nhi</p>
-                <DropDown user={props.user} isShow={isShow}/>
+                <p>{props.user.username}</p>
+                <DropDownAccount user={props.user} isShowAccount={isShowAccount}/>
             </div>
         )
     }
@@ -59,10 +88,13 @@ const Account = (props) => {
 
 const Navbar = (props) => {   
     const [user, setUser] = useState();  
+    const [isShowCategory, setIsShowCategory] = useState(false);
  
+    const handleDropDownCategory = () => {
+        setIsShowCategory((isShowCategory) => !isShowCategory);
+    }
 
     useEffect(() => {
-        //localStorage.clear();
         const checkUser = localStorage.getItem("user");
         if (checkUser)
             setUser(JSON.parse(checkUser));
@@ -74,9 +106,10 @@ const Navbar = (props) => {
             <Link to='/' className = "logo">
                 <img src = "/images/logo.png" width="64px" height="64px"/>
             </Link>
-            <div className = "menu">
+            <div className = "menu" onClick={handleDropDownCategory}>
                 <img src = "/images/menu.png" height="32px" width="32px"/>
                 <p>category</p>
+                <DropDownCategory isShowCategory={isShowCategory}/>
             </div>
             <div className = "search">SEARCH BAR</div>
             <div className = "cart">
