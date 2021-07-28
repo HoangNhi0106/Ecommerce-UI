@@ -55,7 +55,7 @@ export const AdminAccount = () => {
                     <tr key={item.accountId}>
                         <td>{item.accountId}</td>
                         <td>{item.username}</td>
-                        <td>{item.comment}</td>
+                        <td>{item.email}</td>
                         <td>{item.firstname}</td>
                         <td>{item.lastname}</td>
                         <td>{item.phone}</td>
