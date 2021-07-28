@@ -11,28 +11,27 @@ const Signup = (props) => {
     const [email, setEmail] = useState("");
     //const [user, setUser] = useState(false);  
 
-    const handleSignupSubmit = async e => {
-        if (rePassword != password)
-            console.log("password must be equal to retyped password");
-        else {
-            e.preventDefault();
-            const data = { username, email, password };
-
-            //signup
-            await axios.post(UrlSignup, data )
-            .then(response => {
-                console.log(response)
-                 //signin
-                axios.post(UrlSignin, { username, password })
+    const signin = () => {
+        axios.post(UrlSignin, { username, password })
                 .then(response => {
                     // store the user in localStorage
-                    localStorage.setItem('user', response.data);
+                    localStorage.setItem('user', JSON.stringify(response.data));
                     //reload page
                     props.handleSignupClick();
-                    window.location.reload();
                 })
                 .catch(err => console.log(err));
-            }) .catch(err => console.log(err)); 
+    }
+
+    const handleSignupSubmit = async e => {
+        e.preventDefault();
+        if (rePassword !== password)
+            console.log("password must be equal to retyped password");
+        else {
+            axios.post(UrlSignup, { 
+                username, email, password } )
+                .then(() => signin()) 
+                .catch(err => console.log(err)); 
+            window.location.reload();
         }
     };
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useHistory } from 'react-router-dom';
 import './Navbar.css';
-import Category from "../category/Category";
 
 const signout = () => {
     localStorage.clear();
@@ -107,7 +106,6 @@ const Navbar = (props) => {
         if (event.key === 'Enter')
             history.push(`/search/${search}`)
     }
-
 
     return (
         <nav id = 'navbar'>

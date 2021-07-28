@@ -26,6 +26,7 @@ const Search = () => {
                 <Link to={{ pathname: RouteChange(item), state: {id: item.productId} }} id = "product-item" key={item.productId}>
                     <img src={item.image} width="150px" height="150px"/>
                     <div className = "product-name">{item.pname}</div>
+                    <div className = "product-price">{item.price}</div>
                     <div className = "product-rating">
                         <img src="/images/star.png" height="16px"/>
                         <p>{item.rating}</p>

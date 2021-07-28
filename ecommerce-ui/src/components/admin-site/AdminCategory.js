@@ -38,7 +38,7 @@ const CreateNewCategory = ({isShowCreate}) => {
             <form className="admin-form">
                 <div className="data">
                     <label htmlFor="category-name">CATEGORY NAME</label>
-                    <input type="text" name="category-name"
+                    <input type="text" name="category-name" required
                         onChange={({ target }) => setCname(target.value)}/>
                 </div>
                 <div className="data">
@@ -59,6 +59,8 @@ const EditCategory = (props) => {
     const [description, setDescription] = useState(category.description);
 
     useEffect(() => {
+        setCname(category.cname);
+        setDescription(category.description);
         const checkUser = localStorage.getItem("user");
         if (checkUser)
             setUser(JSON.parse(checkUser));
@@ -89,12 +91,12 @@ const EditCategory = (props) => {
             <form className="admin-form">
                 <div className="data">
                     <label htmlFor="category-name">CATEGORY NAME</label>
-                    <input type="text" name="category-name" placeholder={category.cname}
+                    <input type="text" name="category-name" value={cname} required
                         onChange={({ target }) => setCname(target.value)}/>
                 </div>
                 <div className="data">
                     <label htmlFor="description">DESCRIPTION</label>
-                    <input type="text" name="description" placeholder={category.description}
+                    <input type="text" name="description" value={description}
                         onChange={({ target }) => setDescription(target.value)}/>
                 </div>
             </form>

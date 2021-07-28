@@ -3,11 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import ConfirmProvider from './store/ConfirmContext'
+import ConfirmModel from './components/confirm model/ConfirmModel';
 
 ReactDOM.render(
-  <React.StrictMode>
+  /*<React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>,*/
+  <ConfirmProvider>
+    <App/>
+  </ConfirmProvider>,
   document.getElementById('root')
 );
 

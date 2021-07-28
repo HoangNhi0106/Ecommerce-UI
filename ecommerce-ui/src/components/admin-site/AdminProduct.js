@@ -1,6 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import './AdminSite.css';
+import useConfirm from '../../hooks/useConfirm';
+import ConfirmModel from '../confirm model/ConfirmModel';
+import { ConfirmContext } from '../../store/ConfirmContext';
 
 const CreateNewProduct = ({isShowCreate}) => {
     const [user, setUser] = useState();  
@@ -76,12 +79,12 @@ const CreateNewProduct = ({isShowCreate}) => {
             <form className="admin-form">
                 <div className="data">
                     <label htmlFor="product-name">PRODUCT NAME</label>
-                    <input type="text" name="product-name"
+                    <input type="text" name="product-name" required
                         onChange={({ target }) => setPname(target.value)}/>
                 </div>
                 <div className="data">
                     <label htmlFor="category-name">CATEGORY NAME</label>
-                    <input type="text" name="category-name"
+                    <input type="text" name="category-name" required
                         onChange={({ target }) => setCategoryName(target.value)}/>
                 </div>
                 <div className="data">
@@ -91,17 +94,17 @@ const CreateNewProduct = ({isShowCreate}) => {
                 </div>
                 <div className="data">
                     <label htmlFor="amount">AMOUNT</label>
-                    <input type="number" name="amount" min="0"
+                    <input type="number" name="amount" min="0" 
                         onChange={({ target }) => setAmount(target.value)}/>
                 </div>
                 <div className="data">
                     <label htmlFor="price">PRICE</label>
-                    <input type="number" name="price" min="0"
+                    <input type="number" name="price" min="0" 
                         onChange={({ target }) => setPrice(target.value)}/>
                 </div>
                 <div className="data">
                     <label htmlFor="description">DESCRIPTION</label>
-                    <input type="text" name="description"
+                    <input type="text" name="description" 
                         onChange={({ target }) => setDescription(target.value)}/>
                 </div>
             </form>
@@ -121,6 +124,12 @@ const EditProduct = (props) => {
     const [image, setImage] = useState(null);
 
     useEffect(() => {
+        setPname(product.pname);
+        setCategoryName(product.categoryName);
+        setAmount(product.amount);
+        setPrice(product.setPrice);
+        setDescription(product.description);
+        //get current user
         const checkUser = localStorage.getItem("user");
         if (checkUser)
             setUser(JSON.parse(checkUser));
@@ -129,7 +138,6 @@ const EditProduct = (props) => {
     const UpdateWithImage = (formData) => {
         let UrlImage = "http://localhost:8080/ecommerce-api/admin/image/save";
         let UrlProduct = "http://localhost:8080/ecommerce-api/admin/product/update";
-        
         axios.post(UrlImage, 
             formData, {
                 headers : {
@@ -186,12 +194,12 @@ const EditProduct = (props) => {
             <form className="admin-form">
                 <div className="data">
                     <label htmlFor="product-name">PRODUCT NAME</label>
-                    <input type="text" name="product-name" placeholder={product.pname}
+                    <input type="text" name="product-name" value={pname} required
                         onChange={({ target }) => setPname(target.value)}/>
                 </div>
                 <div className="data">
                     <label htmlFor="category-name">CATEGORY NAME</label>
-                    <input type="text" name="category-name" placeholder={product.categoryName}
+                    <input type="text" name="category-name" value={categoryName} required
                         onChange={({ target }) => setCategoryName(target.value)}/>
                 </div>
                 <div className="data">
@@ -201,17 +209,17 @@ const EditProduct = (props) => {
                 </div>
                 <div className="data">
                     <label htmlFor="amount">AMOUNT</label>
-                    <input type="number" name="amount" min="0" placeholder={product.amount}
+                    <input type="number" name="amount" min="0" value={amount} 
                         onChange={({ target }) => setAmount(target.value)}/>
                 </div>
                 <div className="data">
                     <label htmlFor="price">PRICE</label>
-                    <input type="number" name="price" min="0" placeholder={product.price}
+                    <input type="number" name="price" min="0" value={price} 
                         onChange={({ target }) => setPrice(target.value)}/>
                 </div>
                 <div className="data">
                     <label htmlFor="description">DESCRIPTION</label>
-                    <input type="text" name="description" placeholder={product.description}
+                    <input type="text" name="description" value={description} 
                         onChange={({ target }) => setDescription(target.value)}/>
                 </div>
             </form>
@@ -227,6 +235,9 @@ export const AdminProduct = () => {
     const [isShowCreate, setIsShowCreate] = useState(false);
     const [isShowEdit, setIsShowEdit] = useState(false);
     const [editProduct, setEditProduct] = useState(0);
+    const {confirm} = useConfirm();
+    const {state} = useContext(ConfirmContext);
+    const [update, setUpdate] = useState(false);
     let Url = "http://localhost:8080/ecommerce-api/admin/product";
 
     useEffect(() => {
@@ -249,12 +260,11 @@ export const AdminProduct = () => {
         setEditProduct(item);
     }
 
-    const handleDeleteProduct = async (e, id) => {
-        console.log(id);
-        e.preventDefault();
+
+    const DeleteProduct = (id) => {
         let Url = "http://localhost:8080/ecommerce-api/admin/product/delete/" + id;
         
-        await axios.delete(Url, {
+        axios.delete(Url, {
             headers : {
                 'Authorization': `${user.tokenType} ${user.accessToken}`
             }
@@ -263,9 +273,18 @@ export const AdminProduct = () => {
             window.location.reload();
         }).catch(err => console.log(err));
     }
+    
+    const handleDeleteProduct = async (e, id) => {
+        e.preventDefault();
+        const isConfirmed = await confirm('Do you want to delete?');
+        if (isConfirmed) 
+            DeleteProduct(id);
+        await setUpdate(update => !update);
+    }
 
     return (
         <div id="admin-product">
+            <ConfirmModel update={update}/>
             <CreateNewProduct isShowCreate={isShowCreate}/>
             <EditProduct isShowEdit={isShowEdit} editProduct={editProduct}/>
             <div className="manage">

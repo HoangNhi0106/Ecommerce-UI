@@ -8,7 +8,7 @@
     margin: 10px;
     padding: 10px;
     width: 150px;
-    height: 200px;
+    height: 220px;
     background-color: #EDE5E2;
     border-radius: 10px;
     text-decoration: none;
@@ -32,15 +32,25 @@
     text-overflow: ellipsis;
 }
 
+.search-view #product-item .product-price {
+    font-size: 12px;
+    background-color: #9D5D48;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    margin: 2px 15px;
+    text-align: center;
+}
+
 .search-view #product-item .product-rating {
     display: flex;
     float: right;
     position: relative;
-    bottom: 5px;
     align-items: center;
 }
 
 .search-view #product-item .product-rating p {
     font-size: 12px;
     margin-left: 10px;
+    line-height: 0px;
 }
