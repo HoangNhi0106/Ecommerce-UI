@@ -30,7 +30,7 @@
     grid-column: 2;
 }
 
-#admin-product {
+#admin-product, #admin-category, #admin-rating, #admin-account {
     margin: 20px;
 }
 
@@ -146,7 +146,7 @@ th {
     font-weight: bold;
 }
 
-.data input {
+.data input, select {
     border-radius: 20px;
 	width: 100%;
     padding: 5px 10px;

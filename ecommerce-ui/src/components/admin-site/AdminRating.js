@@ -1,12 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import { Route, Switch } from "react-router";
 import axios from 'axios';
 import './AdminSite.css';
+import useConfirm from '../../hooks/useConfirm';
+import ConfirmModel from '../confirm model/ConfirmModel';
+import PaginationAdmin from '../../utils/pagination-admin/PaginationAdmin';
 
 export const AdminRating = () => {
     const checkUser = localStorage.getItem("user");
     const [user, setUser] = useState(JSON.parse(checkUser)); 
     const [ratingList, setRatingList] = useState([]);
+    const {confirm} = useConfirm();
     let Url = "http://localhost:8080/ecommerce-api/admin/rating";
 
     useEffect(() => {
@@ -22,12 +25,10 @@ export const AdminRating = () => {
         
     }, []);
 
-    const handleDeleteRating = async (e, id) => {
-        console.log(id);
-        e.preventDefault();
+    const DeleteRating = (id) => {
         let Url = "http://localhost:8080/ecommerce-api/admin/rating/delete/" + id;
         
-        await axios.delete(Url, {
+        axios.delete(Url, {
             headers : {
                 'Authorization': `${user.tokenType} ${user.accessToken}`
             }
@@ -37,34 +38,48 @@ export const AdminRating = () => {
         }).catch(err => console.log(err));
     }
 
+    const handleDeleteRating = async(e, item) => {
+        e.preventDefault();
+        const isConfirmed = await confirm(`Do you want to delete rating id = ${item.ratingId}?`);
+        if (isConfirmed) 
+            DeleteRating(item.ratingId);
+    }
+
+    const header =[
+        "ID", "Product ID", "Product Name", "Username", "Date", "Comment", "DELETE"
+    ]
+
+    const Ratinglist = (props) => {
+        return(
+            <tr key={props.data.ratingId}>
+                <td>{props.data.ratingId}</td>
+                <td>{props.data.productId}</td>
+                <td>{props.data.pname}</td>
+                <td>{props.data.username}</td>
+                <td>{props.data.date}</td>
+                <td>{props.data.comment}</td>
+                <td><button className="delete-btn" onClick={(e) => handleDeleteRating(e, props.data)}>X</button></td>
+            </tr> 
+        )
+    }
+
     return (
-        <div id="admin-product">
-            <table className="table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Product ID</th>
-                    <th>Product Name</th>
-                    <th>Username</th>
-                    <th>Date</th>
-                    <th>Comment</th>
-                    <th>DELETE</th>
-                </tr>
-                </thead>
-                <tbody>
-                {ratingList.sort((a, b) => (a.ratingId > b.ratingId) ? 1 : -1).map(item => 
-                    <tr key={item.ratingId}>
-                        <td>{item.ratingId}</td>
-                        <td>{item.productId}</td>
-                        <td>{item.pname}</td>
-                        <td>{item.username}</td>
-                        <td>{item.date}</td>
-                        <td>{item.comment}</td>
-                        <td><button className="delete-btn" onClick={(e) => handleDeleteRating(e, item.ratingId)}>X</button></td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
+        <div id="admin-rating">
+            {ratingList.length > 0 ? (
+                <>
+                    <PaginationAdmin
+                        header={header}
+                        data={ratingList}
+                        RenderComponent={Ratinglist}
+                        pageLimit={5}
+                        dataLimit={10}
+                    />
+                </>
+                ) : (
+                <h1>No Rating to display</h1>
+            )}
+            <ConfirmModel/>
+            
         </div>
     )
 }

@@ -2,6 +2,9 @@ import React, {useState, useEffect} from 'react';
 import { Route, Switch } from "react-router";
 import axios from 'axios';
 import './AdminSite.css';
+import useConfirm from '../../hooks/useConfirm';
+import ConfirmModel from '../confirm model/ConfirmModel';
+import PaginationAdmin from '../../utils/pagination-admin/PaginationAdmin';
 
 const CreateNewCategory = ({isShowCreate}) => {
     const [user, setUser] = useState();  
@@ -13,7 +16,6 @@ const CreateNewCategory = ({isShowCreate}) => {
         if (checkUser)
             setUser(JSON.parse(checkUser));
       }, []);
-
 
     const handleCreateProductSubmit = async e => {
         e.preventDefault();
@@ -112,6 +114,7 @@ export const AdminCategory = () => {
     const [isShowCreate, setIsShowCreate] = useState(false);
     const [isShowEdit, setIsShowEdit] = useState(false);
     const [editCategory, setEditCategory] = useState(0);
+    const {confirm} = useConfirm();
     let Url = "http://localhost:8080/ecommerce-api/admin/category";
 
     useEffect(() => {
@@ -134,12 +137,9 @@ export const AdminCategory = () => {
         setEditCategory(item);
     }
 
-    const handleDeleteCategory = async (e, id) => {
-        console.log(id);
-        e.preventDefault();
+    const DeleteCategory = (id) => {
         let Url = "http://localhost:8080/ecommerce-api/admin/category/delete/" + id;
-        
-        await axios.delete(Url, {
+        axios.delete(Url, {
             headers : {
                 'Authorization': `${user.tokenType} ${user.accessToken}`
             }
@@ -149,37 +149,51 @@ export const AdminCategory = () => {
         }).catch(err => console.log(err));
     }
 
+    const handleDeleteCategory = async (e, item) => {
+        e.preventDefault();
+        const isConfirmed = await confirm(`Do you want to delete category ${item.cname}?`);
+        if (isConfirmed) 
+            DeleteCategory(item.categoryId);
+    }
+
+    const header = [
+        "ID",  "Category Name", "Created in", "Updated in", "Description", "DELETE"
+    ]
+
+    const CategoryList = (props) => {
+        return (
+            <tr key={props.data.categoryId}>
+                <td>{props.data.categoryId}</td>
+                <td onClick={() => handleIsShowEdit(props.data)}>{props.data.cname}</td>
+                <td>{props.data.createdIn}</td>
+                <td>{props.data.updatedIn}</td>
+                <td>{props.data.description}</td>
+                <td><button className="delete-btn" onClick={(e) => handleDeleteCategory(e, props.data)}>X</button></td>
+            </tr>
+        )
+    }
+
     return (
-        <div id="admin-product">
+        <div id="admin-category">
+            <ConfirmModel/>
             <CreateNewCategory isShowCreate={isShowCreate}/>
             <EditCategory isShowEdit={isShowEdit} editCategory={editCategory}/>
             <div className="manage">
                 <button className="create-btn" onClick={handleIsShowCreate}>CREATE NEW CATEGORY</button>
             </div>
-            <table className="table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Category Name</th>
-                    <th>Created in</th>
-                    <th>Updated in</th>
-                    <th>Description</th>
-                    <th>DELETE</th>
-                </tr>
-                </thead>
-                <tbody>
-                {categoryList.sort((a, b) => (a.categoryId > b.categoryId) ? 1 : -1).map(item => 
-                    <tr key={item.categoryId}>
-                        <td>{item.categoryId}</td>
-                        <td onClick={() => handleIsShowEdit(item)}>{item.cname}</td>
-                        <td>{item.createdIn}</td>
-                        <td>{item.updatedIn}</td>
-                        <td>{item.description}</td>
-                        <td><button className="delete-btn" onClick={(e) => handleDeleteCategory(e, item.categoryId)}>X</button></td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
+            {categoryList.length > 0 ? (
+                <>
+                    <PaginationAdmin
+                        header={header}
+                        data={categoryList}
+                        RenderComponent={CategoryList}
+                        pageLimit={5}
+                        dataLimit={10}
+                    />
+                </>
+                ) : (
+                <h1>No Category to display</h1>
+            )}
         </div>
     )
 }

@@ -3,21 +3,28 @@ import axios from 'axios';
 import './AdminSite.css';
 import useConfirm from '../../hooks/useConfirm';
 import ConfirmModel from '../confirm model/ConfirmModel';
-import { ConfirmContext } from '../../store/ConfirmContext';
+import PaginationAdmin from '../../utils/pagination-admin/PaginationAdmin';
 
 const CreateNewProduct = ({isShowCreate}) => {
-    const [user, setUser] = useState();  
+    const checkUser = localStorage.getItem("user");
+    const [user, setUser] = useState(JSON.parse(checkUser)); 
     const [pname, setPname] = useState(null);
     const [categoryName, setCategoryName] = useState(null);
     const [amount, setAmount] = useState(0);
     const [price, setPrice] = useState(0);
     const [description, setDescription] = useState(null);
     const [image, setImage] = useState(null);
+    const [categoryList, setCategoryList] = useState([]);
 
     useEffect(() => {
-        const checkUser = localStorage.getItem("user");
-        if (checkUser)
-            setUser(JSON.parse(checkUser));
+        //get category list
+        axios.get("http://localhost:8080/ecommerce-api/admin/category", {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET",
+                "Authorization": `${user.tokenType} ${user.accessToken}`}
+        })
+            .then(response => setCategoryList(response.data.data));
       }, []);
 
     const SaveWithImage = (formData) => {
@@ -84,8 +91,9 @@ const CreateNewProduct = ({isShowCreate}) => {
                 </div>
                 <div className="data">
                     <label htmlFor="category-name">CATEGORY NAME</label>
-                    <input type="text" name="category-name" required
-                        onChange={({ target }) => setCategoryName(target.value)}/>
+                    <select name="category-name" form="categoryform" onChange={({ target }) => setCategoryName(target.value)}>
+                        {categoryList.map(item => <option value={item.cname}>{item.cname}</option>)}
+                    </select>
                 </div>
                 <div className="data">
                     <label htmlFor="image">IMAGE</label>
@@ -115,13 +123,15 @@ const CreateNewProduct = ({isShowCreate}) => {
 
 const EditProduct = (props) => {
     const product = props.editProduct;
-    const [user, setUser] = useState();  
+    const checkUser = localStorage.getItem("user");
+    const [user, setUser] = useState(JSON.parse(checkUser)); 
     const [pname, setPname] = useState(product.pname);
     const [categoryName, setCategoryName] = useState(product.categoryName);
     const [amount, setAmount] = useState(product.amount);
     const [price, setPrice] = useState(product.price);
     const [description, setDescription] = useState(product.description);
     const [image, setImage] = useState(null);
+    const [categoryList, setCategoryList] = useState([]);
 
     useEffect(() => {
         setPname(product.pname);
@@ -129,10 +139,14 @@ const EditProduct = (props) => {
         setAmount(product.amount);
         setPrice(product.setPrice);
         setDescription(product.description);
-        //get current user
-        const checkUser = localStorage.getItem("user");
-        if (checkUser)
-            setUser(JSON.parse(checkUser));
+        //get category list
+        axios.get("http://localhost:8080/ecommerce-api/admin/category", {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET",
+                "Authorization": `${user.tokenType} ${user.accessToken}`}
+        })
+            .then(response => setCategoryList(response.data.data));
     }, []);
 
     const UpdateWithImage = (formData) => {
@@ -199,8 +213,9 @@ const EditProduct = (props) => {
                 </div>
                 <div className="data">
                     <label htmlFor="category-name">CATEGORY NAME</label>
-                    <input type="text" name="category-name" value={categoryName} required
-                        onChange={({ target }) => setCategoryName(target.value)}/>
+                    <select name="category-name" form="categoryform" onChange={({ target }) => setCategoryName(target.value)}>
+                        {categoryList.map(item => <option value={item.cname}>{item.cname}</option>)}
+                    </select>
                 </div>
                 <div className="data">
                     <label htmlFor="image">IMAGE</label>
@@ -232,12 +247,10 @@ export const AdminProduct = () => {
     const checkUser = localStorage.getItem("user");
     const [user, setUser] = useState(JSON.parse(checkUser)); 
     const [productList, setProductList] = useState([]);
-    const [isShowCreate, setIsShowCreate] = useState(false);
-    const [isShowEdit, setIsShowEdit] = useState(false);
+    const [isShowCreate, setIsShowCreate] = useState(false); 
     const [editProduct, setEditProduct] = useState(0);
+    const [isShowEdit, setIsShowEdit] = useState(false);
     const {confirm} = useConfirm();
-    const {state} = useContext(ConfirmContext);
-    const [update, setUpdate] = useState(false);
     let Url = "http://localhost:8080/ecommerce-api/admin/product";
 
     useEffect(() => {
@@ -254,12 +267,11 @@ export const AdminProduct = () => {
         setIsShowCreate(isShowCreate => !isShowCreate);
         
     }
-
+    
     const handleIsShowEdit = (item) => {
         setIsShowEdit(isShowEdit => !isShowEdit);
         setEditProduct(item);
     }
-
 
     const DeleteProduct = (id) => {
         let Url = "http://localhost:8080/ecommerce-api/admin/product/delete/" + id;
@@ -274,58 +286,58 @@ export const AdminProduct = () => {
         }).catch(err => console.log(err));
     }
     
-    const handleDeleteProduct = async (e, id) => {
+    const handleDeleteProduct = async (e, item) => {
         e.preventDefault();
-        const isConfirmed = await confirm('Do you want to delete?');
+        const isConfirmed = await confirm(`Do you want to delete product ${item.pname}?`);
         if (isConfirmed) 
-            DeleteProduct(id);
-        await setUpdate(update => !update);
+            DeleteProduct(item.productId);
     }
+
+    const ProductList = (props) => {
+        return (
+            <tr key={props.data.productId} >
+                <td>{props.data.productId}</td>
+                <td onClick={() => handleIsShowEdit(props.data)}>{props.data.pname}</td>
+                <td>{props.data.categoryName}</td>
+                <td><a href={props.data.image}>{props.data.image}</a></td>
+                <td>{props.data.amount}</td>
+                <td>{props.data.sold}</td>
+                <td>{props.data.price}</td>
+                <td>{props.data.rating}</td>
+                <td>{props.data.createdIn}</td>
+                <td>{props.data.updatedIn}</td>
+                <td>{props.data.description}</td>
+                <td><button className="delete-btn" onClick={(e) => handleDeleteProduct(e, props.data)}>X</button></td>
+            </tr>
+        )
+    }
+
+    const header = [
+        "ID", "Product Name", "Category Name", "Image URL", "Amount", "Sold", "Price", "Rating",
+        "Created in", "Updated in", "Description", "DELETE"
+    ]
 
     return (
         <div id="admin-product">
-            <ConfirmModel update={update}/>
+            <ConfirmModel/>
             <CreateNewProduct isShowCreate={isShowCreate}/>
             <EditProduct isShowEdit={isShowEdit} editProduct={editProduct}/>
             <div className="manage">
                 <button className="create-btn" onClick={handleIsShowCreate}>CREATE NEW PRODUCT</button>
             </div>
-            <table className="table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Product Name</th>
-                    <th>Category Name</th>
-                    <th>Image URL</th>
-                    <th>Amount</th>
-                    <th>Sold</th>
-                    <th>Price</th>
-                    <th>Rating</th>
-                    <th>Created in</th>
-                    <th>Updated in</th>
-                    <th>Description</th>
-                    <th>DELETE</th>
-                </tr>
-                </thead>
-                <tbody>
-                {productList.sort((a, b) => (a.productId > b.productId) ? 1 : -1).map(item => 
-                    <tr key={item.productId} >
-                        <td>{item.productId}</td>
-                        <td onClick={() => handleIsShowEdit(item)}>{item.pname}</td>
-                        <td>{item.categoryName}</td>
-                        <td><a href={item.image}>{item.image}</a></td>
-                        <td>{item.amount}</td>
-                        <td>{item.sold}</td>
-                        <td>{item.price}</td>
-                        <td>{item.rating}</td>
-                        <td>{item.createdIn}</td>
-                        <td>{item.updatedIn}</td>
-                        <td>{item.description}</td>
-                        <td><button className="delete-btn" onClick={(e) => handleDeleteProduct(e, item.productId)}>X</button></td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
+            {productList.length > 0 ? (
+                <>
+                    <PaginationAdmin
+                        header={header}
+                        data={productList}
+                        RenderComponent={ProductList}
+                        pageLimit={5}
+                        dataLimit={10}
+                    />
+                </>
+                ) : (
+                <h1>No Product to display</h1>
+            )}
         </div>
     )
 }
