@@ -35,3 +35,17 @@
     grid-column: 2;
     width: 100%;
 }
+
+#category .product-list select {
+    border-radius: 20px;
+	width: 25%;
+    float: right;
+    padding: 5px 10px;
+    line-height: 30px;
+	font-size: 15px;
+	background-color: #EDE5E2;
+    border: none;
+    outline: none;
+    box-shadow: 1px 1px 5px #D2BBC4;
+    margin-top: 20px;
+}

@@ -35,7 +35,7 @@ export function PaginationAdmin({ header, data, RenderComponent, pageLimit, data
             <table className="table">
                 <thead>
                     <tr>
-                        {header.map(item => <th>{item}</th>)}
+                        {header.map((item, index) => <th key={index}>{item}</th>)}
                     </tr>
                 </thead>
                 <tbody className="dataContainer">

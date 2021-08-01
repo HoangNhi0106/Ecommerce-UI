@@ -130,6 +130,29 @@ const Product = () => {
                     <button className = "btn-buy">ADD TO CART</button>
                 </div>
             </div>
+            <div className = "product-table">
+                <p>Detail Information</p> 
+                <table className = "information">
+                    <tbody>
+                        <tr>
+                            <th>Brand</th>
+                            <td>{product.brandName}</td>
+                        </tr>
+                        <tr>
+                            <th>Volume</th>
+                            <td>{product.volume}</td>
+                        </tr>
+                        <tr>
+                            <th>Made In</th>
+                            <td>{product.madeIn}</td>
+                        </tr>
+                        <tr>
+                            <th>Skin Type</th>
+                            <td>{product.skinType}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div className = "product-description">
                 <p>description</p> 
                 <div className = "description">{product.description}</div>

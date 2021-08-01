@@ -6,6 +6,7 @@ import ProductItem from '../product item/ProductItem';
 
 const Category = () => {
     const [category, setCategory] = useState([]);
+    const [sort, setSort] = useState("");
     let { cname } = useParams();
 
     useEffect(() => {
@@ -27,7 +28,14 @@ const Category = () => {
                 <div className="category-description">{category.description}</div>
             </div>
             <div className="product-list">
-                <ProductItem name={cname} type={false}/>
+                <select name="sort" value={sort} onChange={({ target }) => setSort(target.value)}>
+                    <option key={0} value="">None</option>
+                    <option key={1} value="/sort/price/asc">Lowest Price</option>
+                    <option key={2} value="/sort/price/desc">Highest Price</option>
+                    <option key={3} value="/sort/createdin">Newest Product</option>
+                    <option key={4} value="/sort/rating">Highest Rating</option>
+                </select>
+                <ProductItem name={cname} type={false} sort={sort}/>
             </div>
         </div>
     )

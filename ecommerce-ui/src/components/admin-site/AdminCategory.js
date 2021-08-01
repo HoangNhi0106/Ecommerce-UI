@@ -51,23 +51,22 @@ const CreateNewCategory = ({isShowCreate}) => {
 }
 
 const EditCategory = (props) => {
-    const category = props.editCategory;
     const checkUser = localStorage.getItem("user");
     const [user, setUser] = useState(JSON.parse(checkUser)); 
-    const [cname, setCname] = useState(category.cname);
-    const [description, setDescription] = useState(category.description);
+    const [cname, setCname] = useState("");
+    const [description, setDescription] = useState("");
 
     useEffect(() => {
-        setCname(category.cname);
-        setDescription(category.description);
-    }, []);
+        setCname(props.editCategory.cname);
+        setDescription(props.editCategory.description);
+    }, [props]);
 
 
     const handleEditCategorySubmit = async e => {
         e.preventDefault();
         let Url = "http://localhost:8080/ecommerce-api/admin/category/update";
         const data = {
-            categoryId: category.categoryId, cname, description
+            categoryId: props.editCategory.categoryId, cname, description
         }
 
         console.log(data);
@@ -108,6 +107,7 @@ export const AdminCategory = () => {
     const [isShowCreate, setIsShowCreate] = useState(false);
     const [isShowEdit, setIsShowEdit] = useState(false);
     const [editCategory, setEditCategory] = useState(0);
+    const [search, setSearch] = useState(""); 
     const {confirm} = useConfirm();
     let Url = "http://localhost:8080/ecommerce-api/admin/category";
 
@@ -119,7 +119,6 @@ export const AdminCategory = () => {
                 "Authorization": `${user.tokenType} ${user.accessToken}`}
         })
             .then(response => setCategoryList(response.data.data));
-        
     }, []);
 
     const handleIsShowCreate = () => {
@@ -151,20 +150,45 @@ export const AdminCategory = () => {
     }
 
     const header = [
-        "ID",  "Category Name", "Created in", "Updated in", "Description", "DELETE"
+        "ID",  "Category Name", "Created in", "Updated in", "Description", "BUTTON"
     ]
 
     const CategoryList = (props) => {
         return (
             <tr key={props.data.categoryId}>
                 <td>{props.data.categoryId}</td>
-                <td onClick={() => handleIsShowEdit(props.data)}>{props.data.cname}</td>
+                <td>{props.data.cname}</td>
                 <td>{props.data.createdIn}</td>
                 <td>{props.data.updatedIn}</td>
                 <td>{props.data.description}</td>
-                <td><button className="delete-btn" onClick={(e) => handleDeleteCategory(e, props.data)}>X</button></td>
+                <td>
+                    <button className="delete-btn" onClick={(e) => handleDeleteCategory(e, props.data)}>X</button>
+                    <button className="edit-btn" onClick={() => handleIsShowEdit(props.data)}>E</button>
+                </td>
             </tr>
         )
+    }
+
+    const SearchCategory = (event) => {
+        if (event.key === 'Enter') {
+            if (search != null) {
+                axios.get(`http://localhost:8080/ecommerce-api/admin/category/search=${search}`, {
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET",
+                    "Authorization": `${user.tokenType} ${user.accessToken}`}
+            })
+                .then(response => setCategoryList(response.data.data));
+            } else {
+                axios.get(Url, {
+                    headers: {
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET",
+                        "Authorization": `${user.tokenType} ${user.accessToken}`}
+                })
+                    .then(response => setCategoryList(response.data.data));
+            }
+        } 
     }
 
     return (
@@ -173,6 +197,9 @@ export const AdminCategory = () => {
             <CreateNewCategory isShowCreate={isShowCreate}/>
             <EditCategory isShowEdit={isShowEdit} editCategory={editCategory}/>
             <div className="manage">
+                 <input type="text" className = "admin-search" placeholder="search category name" 
+                    onChange={({ target }) => setSearch(target.value)}
+                    onKeyPress={event => SearchCategory(event)}/>
                 <button className="create-btn" onClick={handleIsShowCreate}>CREATE NEW CATEGORY</button>
             </div>
             {categoryList.length > 0 ? (

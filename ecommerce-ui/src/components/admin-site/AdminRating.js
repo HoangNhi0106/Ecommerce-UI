@@ -46,7 +46,7 @@ export const AdminRating = () => {
     }
 
     const header =[
-        "ID", "Product ID", "Product Name", "Username", "Date", "Comment", "DELETE"
+        "ID", "Product ID", "Product Name", "Username", "Date", "Comment", "BUTTON"
     ]
 
     const Ratinglist = (props) => {

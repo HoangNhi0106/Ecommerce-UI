@@ -49,23 +49,21 @@ const CreateNewBrand = ({isShowCreate}) => {
 }
 
 const EditBrand = (props) => {
-    const brand = props.editBrand;
+    const [bname, setBname] = useState("");
+    const [madeIn, setMadeIn] = useState("");
     const checkUser = localStorage.getItem("user");
     const [user, setUser] = useState(JSON.parse(checkUser)); 
-    const [bname, setBname] = useState(brand.bname);
-    const [madeIn, setMadeIn] = useState(brand.madeIn);
 
     useEffect(() => {
-        setBname(brand.bname);
-        setMadeIn(brand.madeIn);
-    }, []);
-
+        setBname(props.editBrand.bname);
+        setMadeIn(props.editBrand.madeIn);
+    }, [props]);
 
     const handleEditBrandSubmit = async e => {
         e.preventDefault();
         let Url = "http://localhost:8080/ecommerce-api/admin/brand/update";
         const data = {
-            brandId: brand.brandId , bname, madeIn
+            brandId: props.editBrand.brandId , bname, madeIn
         }
         await axios.put(Url, data, {
             headers : {
@@ -104,6 +102,7 @@ export const AdminBrand = () => {
     const [isShowCreate, setIsShowCreate] = useState(false);
     const [isShowEdit, setIsShowEdit] = useState(false);
     const [editBrand, setEditBrand] = useState(0);
+    const [search, setSearch] = useState(""); 
     const {confirm} = useConfirm();
     let Url = "http://localhost:8080/ecommerce-api/admin/brand";
 
@@ -148,20 +147,45 @@ export const AdminBrand = () => {
     }
 
     const header = [
-        "ID",  "Brand Name", "Made In", "Created in", "Updated in", "DELETE"
+        "ID",  "Brand Name", "Made In", "Created in", "Updated in", "BUTTON"
     ]
 
     const BrandList = (props) => {
         return (
             <tr key={props.data.brandId}>
                 <td>{props.data.brandId}</td>
-                <td onClick={() => handleIsShowEdit(props.data)}>{props.data.bname}</td>
+                <td>{props.data.bname}</td>
                 <td>{props.data.madeIn}</td>
                 <td>{props.data.createdIn}</td>
                 <td>{props.data.updatedIn}</td>
-                <td><button className="delete-btn" onClick={(e) => handleDeleteBrand(e, props.data)}>X</button></td>
+                <td>
+                    <button className="delete-btn" onClick={(e) => handleDeleteBrand(e, props.data)}>X</button>
+                    <button className="edit-btn" onClick={() => handleIsShowEdit(props.data)}>E</button>
+                </td>
             </tr>
         )
+    }
+
+    const SearchBrand = (event) => {
+        if (event.key === 'Enter') {
+            if (search != null) {
+                axios.get(`http://localhost:8080/ecommerce-api/admin/brand/search=${search}`, {
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET",
+                    "Authorization": `${user.tokenType} ${user.accessToken}`}
+            })
+                .then(response => setBrandList(response.data.data));
+            } else {
+                axios.get(Url, {
+                    headers: {
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET",
+                        "Authorization": `${user.tokenType} ${user.accessToken}`}
+                })
+                    .then(response => setBrandList(response.data.data));
+            }
+        } 
     }
 
     return (
@@ -170,6 +194,9 @@ export const AdminBrand = () => {
             <CreateNewBrand isShowCreate={isShowCreate}/>
             <EditBrand isShowEdit={isShowEdit} editBrand={editBrand}/>
             <div className="manage">
+                <input type="text" className = "admin-search" placeholder="search brand name" 
+                    onChange={({ target }) => setSearch(target.value)}
+                    onKeyPress={event => SearchBrand(event)}/>
                 <button className="create-btn" onClick={handleIsShowCreate}>CREATE NEW BRAND</button>
             </div>
             {brandList.length > 0 ? (

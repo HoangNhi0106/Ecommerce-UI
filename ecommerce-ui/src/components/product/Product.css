@@ -101,6 +101,36 @@
     left: 38%;
 }
 
+.product-table p {
+    font-size: 20px;
+    font-weight: bolder;
+    color: #9D5D48;
+    line-height: 0px;
+    text-align: center;
+}
+
+.product-table table {
+    width: 50%;
+    border-collapse: collapse;
+    border-radius: 2em;
+    overflow: hidden;
+    margin: auto;
+}
+
+.product-table td {
+    padding: 1em;
+    background: #EDE5E2;
+    border: 2px solid white; 
+}
+
+.product-table th {
+    color: #9D5D48;
+    font-weight: bold;
+    padding: 1em;
+    background: #EDE5E2;
+    border: 2px solid white; 
+}
+
 .product-description {
     height: 200px;
     border: 3px solid #A77A5D;

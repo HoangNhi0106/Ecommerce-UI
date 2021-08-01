@@ -63,6 +63,7 @@ export const AdminAccount = () => {
     const [accountList, setAccountList] = useState([]);
     const [isShowEdit, setIsShowEdit] = useState(false);
     const [editAccount, setEditAccount] = useState(0);
+    const [search, setSearch] = useState(""); 
     const {confirm} = useConfirm();
     let Url = "http://localhost:8080/ecommerce-api/admin/account";
 
@@ -118,21 +119,51 @@ export const AdminAccount = () => {
                 <td>{props.data.phone}</td>
                 <td>{props.data.createdIn}</td>
                 <td>{props.data.updatedIn}</td>
-                <td onClick={() => handleIsShowEdit(props.data)}>{role.join()}</td>
-                <td><button className="delete-btn" onClick={(e) => handleDeleteAccount(e, props.data)}>X</button></td>
+                <td>{role.join()}</td>
+                <td>
+                    <button className="delete-btn" onClick={(e) => handleDeleteAccount(e, props.data)}>X</button>
+                    <button className="edit-btn" onClick={() => handleIsShowEdit(props.data)}>E</button>
+                </td>
             </tr>
         )
     }
 
     const header = [
         "ID", "Username", "Email", "Firstname", "Lastname", "Phone",
-        "Created in", "Updated in", "Roles", "DELETE"
+        "Created in", "Updated in", "Roles", "BUTTON"
     ]
+
+    const SearchAccount = (event) => {
+        if (event.key === 'Enter') {
+            if (search != null) {
+                axios.get(`http://localhost:8080/ecommerce-api/admin/account/search=${search}`, {
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET",
+                    "Authorization": `${user.tokenType} ${user.accessToken}`}
+            })
+                .then(response => setAccountList(response.data.data));
+            } else {
+                axios.get(Url, {
+                    headers: {
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET",
+                        "Authorization": `${user.tokenType} ${user.accessToken}`}
+                })
+                    .then(response => setAccountList(response.data.data));
+            }
+        } 
+    }
 
     return (
         <div id="admin-account">
             <ConfirmModel/>
             <EditAccount isShowEdit={isShowEdit} editAccount={editAccount}/>
+            <div className="manage">
+                 <input type="text" className = "admin-search" placeholder="search by username" 
+                    onChange={({ target }) => setSearch(target.value)}
+                    onKeyPress={event => SearchAccount(event)}/>
+            </div>
             {accountList.length > 0 ? (
                 <>
                     <PaginationAdmin

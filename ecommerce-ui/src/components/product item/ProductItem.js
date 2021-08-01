@@ -10,7 +10,11 @@ const ProductItem = (props) => {
     const RouteChange = (item) => {
         return `/product/id=${item.productId}`;
     }
+
     let Url = 'http://localhost:8080/ecommerce-api/public/product/category=' + props.name;
+    if (props.type == false) 
+        Url = Url + props.sort;
+    
     useEffect(() => {
         axios.get(Url, {
             headers: {
@@ -18,7 +22,7 @@ const ProductItem = (props) => {
                 "Access-Control-Allow-Methods": "GET"}
         })
             .then(response => setProductList(response.data.data));
-    }, [props.name]);
+    }, [props]);
 
     const ProductList = (props) => {
         return (
@@ -33,7 +37,6 @@ const ProductItem = (props) => {
             </Link>
         )
     }
-
 
     if (props.type === true) {
         return (

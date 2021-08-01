@@ -4,6 +4,7 @@ import './AdminSite.css';
 import useConfirm from '../../hooks/useConfirm';
 import ConfirmModel from '../confirm model/ConfirmModel';
 import {PaginationAdmin} from '../../utils/pagination/Pagination';
+import { useHistory } from 'react-router-dom';
 
 const CreateNewProduct = ({isShowCreate}) => {
     const checkUser = localStorage.getItem("user");
@@ -31,7 +32,8 @@ const CreateNewProduct = ({isShowCreate}) => {
         })
             .then(response => {
                 setCategoryList(response.data.data);
-                setCategoryName(response.data.data[0].cname);
+                if (response.data.data[0] != null)
+                    setCategoryName(response.data.data[0].cname);
             });
 
         //get brand list
@@ -43,7 +45,8 @@ const CreateNewProduct = ({isShowCreate}) => {
         })
             .then(response => {
                 setBrandList(response.data.data);
-                setBrandName(response.data.data[0].bname);
+                if (response.data.data[0] != null)
+                    setBrandName(response.data.data[0].bname);
             });
         
       }, []);
@@ -172,32 +175,34 @@ const CreateNewProduct = ({isShowCreate}) => {
 }
 
 const EditProduct = (props) => {
-    const product = props.editProduct;
     const checkUser = localStorage.getItem("user");
     const [user, setUser] = useState(JSON.parse(checkUser)); 
-    const [pname, setPname] = useState(product.pname);
-    const [categoryName, setCategoryName] = useState(product.categoryName);
-    const [brandName, setBrandName] = useState(product.brandName);
-    const [amount, setAmount] = useState(product.amount);
-    const [price, setPrice] = useState(product.price);
-    const [volume, setVolume] = useState(product.volume);
-    const [madeIn, setMadeIn] = useState(product.madeIn);
-    const [skinType, setSkinType] = useState(product.skinType);
-    const [description, setDescription] = useState(product.description);
+    const [pname, setPname] = useState("");
+    const [categoryName, setCategoryName] = useState("");
+    const [brandName, setBrandName] = useState("");
+    const [amount, setAmount] = useState(0);
+    const [price, setPrice] = useState(0);
+    const [volume, setVolume] = useState("");
+    const [madeIn, setMadeIn] = useState("");
+    const [skinType, setSkinType] = useState("");
+    const [description, setDescription] = useState("");
     const [image, setImage] = useState(null);
     const [categoryList, setCategoryList] = useState([]);
     const [brandList, setBrandList] = useState([]);
 
     useEffect(() => {
-        setPname(product.pname);
-        setCategoryName(product.categoryName);
-        setAmount(product.amount);
-        setPrice(product.price);
-        setBrandName(product.brandName);
-        setMadeIn(product.madeIn);
-        setSkinType(product.skinType);
-        setVolume(product.volume);
-        setDescription(product.description);
+        setPname(props.editProduct.pname);
+        setCategoryName(props.editProduct.categoryName);
+        setAmount(props.editProduct.amount);
+        setPrice(props.editProduct.price);
+        setBrandName(props.editProduct.brandName);
+        setMadeIn(props.editProduct.madeIn);
+        setSkinType(props.editProduct.skinType);
+        setVolume(props.editProduct.volume);
+        setDescription(props.editProduct.description);
+    }, [props]);
+
+    useEffect(() => {
         //get category list
         axios.get("http://localhost:8080/ecommerce-api/admin/category", {
             headers: {
@@ -228,7 +233,7 @@ const EditProduct = (props) => {
             }).then(response => {
                 //save product 
                 axios.put(UrlProduct, {
-                    productId: product.productId, pname, categoryName, image: response.data.data.imageId, description, price, amount
+                    productId: props.editProduct.productId, pname, brandName, categoryName, image: response.data.data.imageId, description, price, amount
                 }, {
                     headers : {
                         "Content-Type": "application/json",
@@ -245,7 +250,7 @@ const EditProduct = (props) => {
     const UpdateWithoutImage = () => {
         let UrlProduct = "http://localhost:8080/ecommerce-api/admin/product/update";
         axios.put(UrlProduct, {
-            productId: product.productId, pname, categoryName, image: null, description, price, amount
+            productId: props.editProduct.productId, pname, brandName, categoryName, image: null, description, price, amount
         }, {
             headers : {
                 "Content-Type": "application/json",
@@ -340,6 +345,7 @@ export const AdminProduct = () => {
     const [isShowCreate, setIsShowCreate] = useState(false); 
     const [editProduct, setEditProduct] = useState(0);
     const [isShowEdit, setIsShowEdit] = useState(false);
+    const [search, setSearch] = useState(""); 
     const {confirm} = useConfirm();
     let Url = "http://localhost:8080/ecommerce-api/admin/product";
 
@@ -387,7 +393,7 @@ export const AdminProduct = () => {
         return (
             <tr key={props.data.productId} >
                 <td>{props.data.productId}</td>
-                <td onClick={() => handleIsShowEdit(props.data)}>{props.data.pname}</td>
+                <td>{props.data.pname}</td>
                 <td>{props.data.categoryName}</td>
                 <td>{props.data.brandName}</td>
                 <td><a href={props.data.image}>{props.data.image}</a></td>
@@ -401,7 +407,10 @@ export const AdminProduct = () => {
                 <td>{props.data.description}</td>
                 <td>{props.data.createdIn}</td>
                 <td>{props.data.updatedIn}</td>
-                <td><button className="delete-btn" onClick={(e) => handleDeleteProduct(e, props.data)}>X</button></td>
+                <td>
+                    <button className="delete-btn" onClick={(e) => handleDeleteProduct(e, props.data)}>X</button>
+                    <button className="edit-btn" onClick={() => handleIsShowEdit(props.data)}>E</button>
+                </td>
             </tr>
         )
     }
@@ -409,8 +418,30 @@ export const AdminProduct = () => {
     const header = [
         "ID", "Product Name", "Category Name", "Brand Name", "Image URL", "Amount", "Sold", "Price", "Rating", 
         "Volume", "Made In", "Skin Type", "Description",
-        "Created in", "Updated in", "DELETE"
+        "Created in", "Updated in", "BUTTON"
     ]
+
+    const SearchProduct = (event) => {
+        if (event.key === 'Enter') {
+            if (search != null) {
+                axios.get(`http://localhost:8080/ecommerce-api/admin/product/search=${search}`, {
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET",
+                    "Authorization": `${user.tokenType} ${user.accessToken}`}
+            })
+                .then(response => setProductList(response.data.data));
+            } else {
+                axios.get(Url, {
+                    headers: {
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET",
+                        "Authorization": `${user.tokenType} ${user.accessToken}`}
+                })
+                    .then(response => setProductList(response.data.data));
+            }
+        } 
+    }
 
     return (
         <div id="admin-product">
@@ -418,6 +449,9 @@ export const AdminProduct = () => {
             <CreateNewProduct isShowCreate={isShowCreate}/>
             <EditProduct isShowEdit={isShowEdit} editProduct={editProduct}/>
             <div className="manage">
+                <input type="text" className = "admin-search" placeholder="search product" 
+                    onChange={({ target }) => setSearch(target.value)}
+                    onKeyPress={event => SearchProduct(event)}/>
                 <button className="create-btn" onClick={handleIsShowCreate}>CREATE NEW PRODUCT</button>
             </div>
             {productList.length > 0 ? (

@@ -30,7 +30,7 @@
     grid-column: 2;
 }
 
-#admin-product, #admin-category, #admin-rating, #admin-account {
+#admin-product, #admin-category, #admin-rating, #admin-account, #admin-brand {
     margin: 20px;
 }
 
@@ -52,9 +52,12 @@ th {
     color: #4A382F;
 }
 
+.manage {
+    margin-bottom: 20px;
+}
+
 .create-btn {
     float: right;
-    margin-bottom: 20px;
     border-radius: 30px;
 	background: #9D5D48;
 	border: none;
@@ -84,6 +87,23 @@ th {
     box-shadow: 1px 1px 5px #4A382F;
 }
 
+.edit-btn {
+    margin: auto;
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    background-color: #D2D7F7;
+    font-size: 18px;
+    font-weight: bold;
+    color: #424978;
+    box-shadow: 1px 1px 5px #8998F9;
+    margin-left: 5px;
+}
+
+.edit-btn:hover {
+    background-color: #8998F9;
+}
+
 .delete-btn {
     margin: auto;
     border: none;
@@ -94,6 +114,7 @@ th {
     font-weight: bold;
     color: #4A382F;
     box-shadow: 1px 1px 5px #EDE5E2;
+    margin-right: 5px;
 }
 
 .delete-btn:hover {
