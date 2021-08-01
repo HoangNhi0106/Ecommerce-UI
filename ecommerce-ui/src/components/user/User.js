@@ -25,13 +25,13 @@ const User = () => {
             lastname,
             phone
         }
+        console.log(data);
         e.preventDefault();
         await axios.put(Url, data, {
             headers : {
                 'Authorization': `${user.tokenType} ${user.accessToken}`
             }
         }).then(response => {
-            console.log(response.data.data);
             alert("Update successful!");
         }).catch(err => console.log(err))
     }

@@ -2,8 +2,7 @@
     font-family: Helvetica, sans-serif;
     margin: 20px 120px;
     display: grid;
-    grid-template-columns: 40% 60%;
-    width: 100%;
+    grid-template-columns: 35% 65%;
 }
 
 #category .category-info {

@@ -2,8 +2,9 @@
     font-family: Helvetica, sans-serif;
     display: flex;
     height: 85px;
+    width: 100%;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
     background:  #9D5D48;
     padding: 0px 40px;
   }

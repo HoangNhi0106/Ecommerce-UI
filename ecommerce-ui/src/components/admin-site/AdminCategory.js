@@ -4,20 +4,16 @@ import axios from 'axios';
 import './AdminSite.css';
 import useConfirm from '../../hooks/useConfirm';
 import ConfirmModel from '../confirm model/ConfirmModel';
-import PaginationAdmin from '../../utils/pagination-admin/PaginationAdmin';
+import {PaginationAdmin} from '../../utils/pagination/Pagination';
 
-const CreateNewCategory = ({isShowCreate}) => {
-    const [user, setUser] = useState();  
+const CreateNewCategory = ({isShowCreate}) => {  
+    const checkUser = localStorage.getItem("user");
+    const [user, setUser] = useState(JSON.parse(checkUser)); 
     const [cname, setCname] = useState("");
     const [description, setDescription] = useState("");
 
-    useEffect(() => {
-        const checkUser = localStorage.getItem("user");
-        if (checkUser)
-            setUser(JSON.parse(checkUser));
-      }, []);
 
-    const handleCreateProductSubmit = async e => {
+    const handleCreateCategorySubmit = async e => {
         e.preventDefault();
         let Url = "http://localhost:8080/ecommerce-api/admin/category/save";
         const data = {
@@ -35,7 +31,7 @@ const CreateNewCategory = ({isShowCreate}) => {
     }
 
     return (
-        <div className={`${isShowCreate ? "show" : ""} form-product`}>
+        <div className={`${isShowCreate ? "show" : ""} form-admin`}>
             <p>CREATE NEW CATEGORY</p>
             <form className="admin-form">
                 <div className="data">
@@ -49,27 +45,25 @@ const CreateNewCategory = ({isShowCreate}) => {
                         onChange={({ target }) => setDescription(target.value)}/>
                 </div>
             </form>
-            <button type="submit" className="submit-btn" onClick={handleCreateProductSubmit}>SAVE</button>
+            <button type="submit" className="submit-btn" onClick={handleCreateCategorySubmit}>SAVE</button>
         </div>
     )
 }
 
 const EditCategory = (props) => {
     const category = props.editCategory;
-    const [user, setUser] = useState();  
+    const checkUser = localStorage.getItem("user");
+    const [user, setUser] = useState(JSON.parse(checkUser)); 
     const [cname, setCname] = useState(category.cname);
     const [description, setDescription] = useState(category.description);
 
     useEffect(() => {
         setCname(category.cname);
         setDescription(category.description);
-        const checkUser = localStorage.getItem("user");
-        if (checkUser)
-            setUser(JSON.parse(checkUser));
     }, []);
 
 
-    const handleEditProductSubmit = async e => {
+    const handleEditCategorySubmit = async e => {
         e.preventDefault();
         let Url = "http://localhost:8080/ecommerce-api/admin/category/update";
         const data = {
@@ -88,7 +82,7 @@ const EditCategory = (props) => {
     }
 
     return (
-        <div className={`${props.isShowEdit ? "show" : ""} form-product`}>
+        <div className={`${props.isShowEdit ? "show" : ""} form-admin`}>
             <p>EDIT CATEGORY</p>
             <form className="admin-form">
                 <div className="data">
@@ -102,7 +96,7 @@ const EditCategory = (props) => {
                         onChange={({ target }) => setDescription(target.value)}/>
                 </div>
             </form>
-            <button type="submit" className="submit-btn" onClick={handleEditProductSubmit}>SAVE</button>
+            <button type="submit" className="submit-btn" onClick={handleEditCategorySubmit}>SAVE</button>
         </div>
     )
 }

@@ -18,6 +18,7 @@ const Signup = (props) => {
                     localStorage.setItem('user', JSON.stringify(response.data));
                     //reload page
                     props.handleSignupClick();
+                    window.location.reload();
                 })
                 .catch(err => console.log(err));
     }
@@ -31,7 +32,6 @@ const Signup = (props) => {
                 username, email, password } )
                 .then(() => signin()) 
                 .catch(err => console.log(err)); 
-            window.location.reload();
         }
     };
 

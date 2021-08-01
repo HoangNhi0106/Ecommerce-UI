@@ -3,20 +3,25 @@ import axios from 'axios';
 import './AdminSite.css';
 import useConfirm from '../../hooks/useConfirm';
 import ConfirmModel from '../confirm model/ConfirmModel';
-import PaginationAdmin from '../../utils/pagination-admin/PaginationAdmin';
+import {PaginationAdmin} from '../../utils/pagination/Pagination';
 
 const CreateNewProduct = ({isShowCreate}) => {
     const checkUser = localStorage.getItem("user");
     const [user, setUser] = useState(JSON.parse(checkUser)); 
     const [pname, setPname] = useState(null);
     const [categoryName, setCategoryName] = useState(null);
+    const [brandName, setBrandName] = useState(null);
     const [amount, setAmount] = useState(0);
     const [price, setPrice] = useState(0);
+    const [volume, setVolume] = useState(null);
+    const [madeIn, setMadeIn] = useState(null);
+    const [skinType, setSkinType] = useState(null);
     const [description, setDescription] = useState(null);
     const [image, setImage] = useState(null);
     const [categoryList, setCategoryList] = useState([]);
+    const [brandList, setBrandList] = useState([]);
 
-    useEffect(() => {
+    useEffect(async () => {
         //get category list
         axios.get("http://localhost:8080/ecommerce-api/admin/category", {
             headers: {
@@ -24,7 +29,23 @@ const CreateNewProduct = ({isShowCreate}) => {
                 "Access-Control-Allow-Methods": "GET",
                 "Authorization": `${user.tokenType} ${user.accessToken}`}
         })
-            .then(response => setCategoryList(response.data.data));
+            .then(response => {
+                setCategoryList(response.data.data);
+                setCategoryName(response.data.data[0].cname);
+            });
+
+        //get brand list
+        axios.get("http://localhost:8080/ecommerce-api/admin/brand", {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET",
+                "Authorization": `${user.tokenType} ${user.accessToken}`}
+        })
+            .then(response => {
+                setBrandList(response.data.data);
+                setBrandName(response.data.data[0].bname);
+            });
+        
       }, []);
 
     const SaveWithImage = (formData) => {
@@ -40,7 +61,7 @@ const CreateNewProduct = ({isShowCreate}) => {
             }).then(response => {
                 //save product 
                 axios.post(UrlProduct, {
-                    pname, categoryName, image: response.data.data.imageId, description, price, amount
+                    pname, categoryName, brandName, image: response.data.data.imageId, description, price, amount, volume, madeIn, skinType
                 }, {
                     headers : {
                         "Content-Type": "application/json",
@@ -57,7 +78,7 @@ const CreateNewProduct = ({isShowCreate}) => {
     const SaveWithoutImage = () => {
         let UrlProduct = "http://localhost:8080/ecommerce-api/admin/product/save";
         axios.post(UrlProduct, {
-            pname, categoryName, image: null, description, price, amount
+            pname, categoryName, brandName, image: null, description, price, amount, volume, madeIn, skinType
         }, {
             headers : {
                 "Content-Type": "application/json",
@@ -74,6 +95,12 @@ const CreateNewProduct = ({isShowCreate}) => {
         let formData = new FormData();
         formData.append("file", image);
 
+        const data = {
+            pname, categoryName, brandName, image: null, description, price, amount, volume, madeIn, skinType
+        }
+
+        console.log(data);
+
         if (image != null) 
             SaveWithImage(formData);
         else
@@ -81,7 +108,7 @@ const CreateNewProduct = ({isShowCreate}) => {
     }
 
     return (
-        <div className={`${isShowCreate ? "show" : ""} form-product`}>
+        <div className={`${isShowCreate ? "show" : ""} form-admin`}>
             <p>CREATE NEW PRODUCT</p>
             <form className="admin-form">
                 <div className="data">
@@ -91,14 +118,22 @@ const CreateNewProduct = ({isShowCreate}) => {
                 </div>
                 <div className="data">
                     <label htmlFor="category-name">CATEGORY NAME</label>
-                    <select name="category-name" form="categoryform" onChange={({ target }) => setCategoryName(target.value)}>
-                        {categoryList.map(item => <option value={item.cname}>{item.cname}</option>)}
+                    <select name="category-name" value={categoryName}
+                        onChange={({ target }) => setCategoryName(target.value)}>
+                        {categoryList.map(item => <option key={item.categoryId} value={item.cname}>{item.cname}</option>)}
                     </select>
                 </div>
                 <div className="data">
                     <label htmlFor="image">IMAGE</label>
                     <input type="file" name="image" 
                         onChange={({ target }) => setImage(target.files[0])}/>
+                </div>
+                <div className="data">
+                    <label htmlFor="brand-name">BRAND NAME</label>
+                    <select name="brand-name" value={brandName}
+                        onChange={({ target }) => setBrandName(target.value)}>
+                        {brandList.map(item => <option key={item.brandId} value={item.bname}>{item.bname}</option>)}
+                    </select>
                 </div>
                 <div className="data">
                     <label htmlFor="amount">AMOUNT</label>
@@ -109,6 +144,21 @@ const CreateNewProduct = ({isShowCreate}) => {
                     <label htmlFor="price">PRICE</label>
                     <input type="number" name="price" min="0" 
                         onChange={({ target }) => setPrice(target.value)}/>
+                </div>
+                <div className="data">
+                    <label htmlFor="volume">VOLUME</label>
+                    <input type="text" name="volume"
+                        onChange={({ target }) => setVolume(target.value)}/>
+                </div>
+                <div className="data">
+                    <label htmlFor="made-in">MADE IN</label>
+                    <input type="text" name="made-in"
+                        onChange={({ target }) => setMadeIn(target.value)}/>
+                </div>
+                <div className="data">
+                    <label htmlFor="skintype">SKIN TYPE</label>
+                    <input type="text" name="skintype" 
+                        onChange={({ target }) => setSkinType(target.value)}/>
                 </div>
                 <div className="data">
                     <label htmlFor="description">DESCRIPTION</label>
@@ -127,17 +177,26 @@ const EditProduct = (props) => {
     const [user, setUser] = useState(JSON.parse(checkUser)); 
     const [pname, setPname] = useState(product.pname);
     const [categoryName, setCategoryName] = useState(product.categoryName);
+    const [brandName, setBrandName] = useState(product.brandName);
     const [amount, setAmount] = useState(product.amount);
     const [price, setPrice] = useState(product.price);
+    const [volume, setVolume] = useState(product.volume);
+    const [madeIn, setMadeIn] = useState(product.madeIn);
+    const [skinType, setSkinType] = useState(product.skinType);
     const [description, setDescription] = useState(product.description);
     const [image, setImage] = useState(null);
     const [categoryList, setCategoryList] = useState([]);
+    const [brandList, setBrandList] = useState([]);
 
     useEffect(() => {
         setPname(product.pname);
         setCategoryName(product.categoryName);
         setAmount(product.amount);
-        setPrice(product.setPrice);
+        setPrice(product.price);
+        setBrandName(product.brandName);
+        setMadeIn(product.madeIn);
+        setSkinType(product.skinType);
+        setVolume(product.volume);
         setDescription(product.description);
         //get category list
         axios.get("http://localhost:8080/ecommerce-api/admin/category", {
@@ -147,6 +206,14 @@ const EditProduct = (props) => {
                 "Authorization": `${user.tokenType} ${user.accessToken}`}
         })
             .then(response => setCategoryList(response.data.data));
+        //get brand list
+        axios.get("http://localhost:8080/ecommerce-api/admin/brand", {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET",
+                "Authorization": `${user.tokenType} ${user.accessToken}`}
+        })
+            .then(response => setBrandList(response.data.data));
     }, []);
 
     const UpdateWithImage = (formData) => {
@@ -203,7 +270,7 @@ const EditProduct = (props) => {
     }
 
     return (
-        <div className={`${props.isShowEdit ? "show" : ""} form-product`}>
+        <div className={`${props.isShowEdit ? "show" : ""} form-admin`}>
             <p>EDIT PRODUCT</p>
             <form className="admin-form">
                 <div className="data">
@@ -213,14 +280,22 @@ const EditProduct = (props) => {
                 </div>
                 <div className="data">
                     <label htmlFor="category-name">CATEGORY NAME</label>
-                    <select name="category-name" form="categoryform" onChange={({ target }) => setCategoryName(target.value)}>
-                        {categoryList.map(item => <option value={item.cname}>{item.cname}</option>)}
+                    <select name="category-name" value={categoryName}
+                        onChange={({ target }) => setCategoryName(target.value)}>
+                        {categoryList.map(item => <option key={item.categoryId} value={item.cname}>{item.cname}</option>)}
                     </select>
                 </div>
                 <div className="data">
                     <label htmlFor="image">IMAGE</label>
                     <input type="file" name="image" 
                         onChange={({ target }) => setImage(target.files[0])}/>
+                </div>
+                <div className="data">
+                    <label htmlFor="brand-name">BRAND NAME</label>
+                    <select name="brand-name" value={brandName}
+                        onChange={({ target }) => setBrandName(target.value)}>
+                        {brandList.map(item => <option key={item.brandId} value={item.bname}>{item.bname}</option>)}
+                    </select>
                 </div>
                 <div className="data">
                     <label htmlFor="amount">AMOUNT</label>
@@ -231,6 +306,21 @@ const EditProduct = (props) => {
                     <label htmlFor="price">PRICE</label>
                     <input type="number" name="price" min="0" value={price} 
                         onChange={({ target }) => setPrice(target.value)}/>
+                </div>
+                <div className="data">
+                    <label htmlFor="volume">VOLUME</label>
+                    <input type="text" name="volume" value={volume}
+                        onChange={({ target }) => setVolume(target.value)}/>
+                </div>
+                <div className="data">
+                    <label htmlFor="made-in">MADE IN</label>
+                    <input type="text" name="made-in" value={madeIn}
+                        onChange={({ target }) => setMadeIn(target.value)}/>
+                </div>
+                <div className="data">
+                    <label htmlFor="skintype">SKIN TYPE</label>
+                    <input type="text" name="skintype" value={skinType}
+                        onChange={({ target }) => setSkinType(target.value)}/>
                 </div>
                 <div className="data">
                     <label htmlFor="description">DESCRIPTION</label>
@@ -299,22 +389,27 @@ export const AdminProduct = () => {
                 <td>{props.data.productId}</td>
                 <td onClick={() => handleIsShowEdit(props.data)}>{props.data.pname}</td>
                 <td>{props.data.categoryName}</td>
+                <td>{props.data.brandName}</td>
                 <td><a href={props.data.image}>{props.data.image}</a></td>
                 <td>{props.data.amount}</td>
                 <td>{props.data.sold}</td>
                 <td>{props.data.price}</td>
                 <td>{props.data.rating}</td>
+                <td>{props.data.volume}</td>
+                <td>{props.data.madeIn}</td>
+                <td>{props.data.skinType}</td>
+                <td>{props.data.description}</td>
                 <td>{props.data.createdIn}</td>
                 <td>{props.data.updatedIn}</td>
-                <td>{props.data.description}</td>
                 <td><button className="delete-btn" onClick={(e) => handleDeleteProduct(e, props.data)}>X</button></td>
             </tr>
         )
     }
 
     const header = [
-        "ID", "Product Name", "Category Name", "Image URL", "Amount", "Sold", "Price", "Rating",
-        "Created in", "Updated in", "Description", "DELETE"
+        "ID", "Product Name", "Category Name", "Brand Name", "Image URL", "Amount", "Sold", "Price", "Rating", 
+        "Volume", "Made In", "Skin Type", "Description",
+        "Created in", "Updated in", "DELETE"
     ]
 
     return (

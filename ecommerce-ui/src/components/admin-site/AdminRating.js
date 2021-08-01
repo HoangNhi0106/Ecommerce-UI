@@ -3,7 +3,7 @@ import axios from 'axios';
 import './AdminSite.css';
 import useConfirm from '../../hooks/useConfirm';
 import ConfirmModel from '../confirm model/ConfirmModel';
-import PaginationAdmin from '../../utils/pagination-admin/PaginationAdmin';
+import {PaginationAdmin} from '../../utils/pagination/Pagination';
 
 export const AdminRating = () => {
     const checkUser = localStorage.getItem("user");

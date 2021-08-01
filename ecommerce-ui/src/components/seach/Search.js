@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { useParams, Link } from "react-router-dom";
 import axios from 'axios';
 import "./Search.css";
+import { PaginationUser } from '../../utils/pagination/Pagination';
 
 const Search = () => {
     const [productList, setProductList] = useState([]);
@@ -20,19 +21,34 @@ const Search = () => {
             .then(response => setProductList(response.data.data));
     }, [pname]);
 
-    return (
-        <div className="search-view">
-            {productList.map(item => (
-                <Link to={{ pathname: RouteChange(item), state: {id: item.productId} }} id = "product-item" key={item.productId}>
-                    <img src={item.image} width="150px" height="150px"/>
-                    <div className = "product-name">{item.pname}</div>
-                    <div className = "product-price">{item.price}</div>
+    const ProductList = (props) => {
+        return (
+            <Link to={{ pathname: RouteChange(props.data), state: {id: props.data.productId} }} id = "product-item" key={props.data.productId}>
+                    <img src={props.data.image} width="150px" height="150px"/>
+                    <div className = "product-name">{props.data.pname}</div>
+                    <div className = "product-price">{props.data.price}</div>
                     <div className = "product-rating">
                         <img src="/images/star.png" height="16px"/>
-                        <p>{item.rating}</p>
+                        <p>{props.data.rating}</p>
                     </div>
-                </Link>
-            ))}
+            </Link>
+        )
+    }
+
+    return (
+        <div className="search-view">
+            {productList.length > 0 ? (
+                <>
+                    <PaginationUser
+                        data={productList}
+                        RenderComponent={ProductList}
+                        pageLimit={5}
+                        dataLimit={10}
+                    />
+                </>
+                ) : (
+                <h1>No Product to display</h1>
+            )}
         </div>
     )
 }
